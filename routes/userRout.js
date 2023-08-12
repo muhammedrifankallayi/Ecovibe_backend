@@ -5,7 +5,8 @@
 
    const router = Router()
 
-   router.post("/userlogin",usercontroller.Postregister)
+   router.post("/userRegister",usercontroller.Postregister)
+   router.post('/userLogin',usercontroller.ValidateLOgin)
    
 
 

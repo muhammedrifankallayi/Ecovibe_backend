@@ -40,19 +40,31 @@ if(userExist){
 
  }
 
-
-
-
-   
-
-
     } catch (error) {
         console.log(error.message);
     }
 }
 
-
+ValidateLOgin = async(req,res)=>{
+    try {
+        const email  = req.body.email
+        const Password = req.body.password
+        const UsreData = await User.findOne({email:email})
+        if(UsreData){
+            if(Password===UsreData.password){
+                res.status(200).send({message:true,user:UsreData.name})
+                return
+            }else{
+                res.status(401).send({message:"Password is not correct"})
+            }
+        }
+        res.status(401).send({message:"User Not Found"})
+    } catch (error) {
+        console.log("Error",error);
+    }
+}
 
 module.exports = {
-    Postregister
+    Postregister,
+    ValidateLOgin
 }
