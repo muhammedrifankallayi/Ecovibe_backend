@@ -17,6 +17,25 @@ const UserSchema = new mongoose.Schema({
     password:{
         type:String,
         require:true
+    },
+    image:{
+     type:String,
+    
+    },
+    Date_of_birth:{
+        type: Date
+    },
+    is_admin:{
+        type:Boolean,
+        default:false
+    },
+    is_superAdmin:{
+        type:Boolean,
+        default:false
+    },
+    is_verified:{
+        type:Boolean,
+        default:false
     }
 })
 

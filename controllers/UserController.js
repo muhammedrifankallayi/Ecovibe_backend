@@ -22,21 +22,22 @@ if(userExist){
         name:name,
         email:email,
         mobile:mobile,
-        password:password
+        password:password,
+        
      })
 
  const result  =  await user.save()
 
- const {_id} = await result.toJSON()
+ const {_id} =  await result.toJSON()
 
  const token  = jwt.sign({_id:_id},"secret")
  res.cookie("jwt",token,{
      httpOnly:true,
-     maxAge:60*60*24
+     maxAge:60*60*24*1000
  })
  console.log(token);
 
- res.status(200).send({message:"success"})
+ res.status(200).send({message:"success",token})
 
  }
 
@@ -45,26 +46,59 @@ if(userExist){
     }
 }
 
-ValidateLOgin = async(req,res)=>{
+const  ValidateLOgin = async(req,res)=>{
     try {
-        const email  = req.body.email
-        const Password = req.body.password
+       const FormData = req.body.FormData
+        const email  = FormData.email
+        const Password = FormData.password
         const UsreData = await User.findOne({email:email})
         if(UsreData){
+            
             if(Password===UsreData.password){
-                res.status(200).send({message:true,user:UsreData.name})
-                return
+                const {_id} =  await UsreData.toJSON()
+
+ const token  = jwt.sign({_id:_id},"secret")
+ res.cookie("jwt",token,{
+     httpOnly:true,
+     maxAge:60*60*24*1000
+ })
+ 
+             res.status(200).send({message:"success",user:UsreData.name,token})
+               
+                
             }else{
-                res.status(401).send({message:"Password is not correct"})
+              
+
+          res.status(401).send({message:"Password is not correct"})
+            
             }
         }
+       
         res.status(401).send({message:"User Not Found"})
     } catch (error) {
         console.log("Error",error);
     }
 }
 
+const Authenticate = async(req,res)=>{
+    const token = req.header('Authorization')?.split(' ')[1]; // Get the token from the header
+    if (!token) {
+      return res.status(401).json({ message: 'Access denied. No token provided.',Authorization:false });
+    }
+  
+    try {
+      const decoded = jwt.verify(token, 'secret'); // Verify and decode the token
+     if(decoded){
+        return res.status(200).json({ message: 'User Authentication has been successfull',Authorization:true });
+     }
+    } catch (error) {
+      res.status(400).json({ message: 'Invalid token.' });
+    }
+  }
+
+
 module.exports = {
     Postregister,
-    ValidateLOgin
+    ValidateLOgin,
+    Authenticate
 }

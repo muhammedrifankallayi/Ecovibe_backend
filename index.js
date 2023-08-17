@@ -3,7 +3,10 @@ const mongoose = require('mongoose')
 const cookieparser = require("cookie-parser")
 const bodyParser = require("body-parser")
 const cors = require('cors');
-const UserRote = require("./routes/userRout")
+const UserRoute = require("./routes/userRout")
+
+const adminRoute = require("./routes/adminRout")
+const superAdminRoute = require("./routes/superAdmin")
 
 
 const app = express()
@@ -20,7 +23,9 @@ app.use(bodyParser.json());
 app.use(express.json())
 
 
-app.use("/",UserRote.router)
+app.use("/",UserRoute)
+app.use("/admin",adminRoute)
+app.use("/superAdmin",superAdminRoute)
 
 
 

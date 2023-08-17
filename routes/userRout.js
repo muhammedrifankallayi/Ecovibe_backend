@@ -7,8 +7,9 @@
 
    router.post("/userRegister",usercontroller.Postregister)
    router.post('/userLogin',usercontroller.ValidateLOgin)
+   router.get('/userLogin',usercontroller.Authenticate)
    
 
 
 
-   module.exports ={router}
+   module.exports =router
