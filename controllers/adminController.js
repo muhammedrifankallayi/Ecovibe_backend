@@ -4,12 +4,15 @@ const Users = require('../models/UserModel');
 
 
 const adminVerify = async(req,res)=>{
+    console.log("admin working");
 
     console.log(req.body,'data success');
     try {
 
-    const email = req.body.email
-    const password = req.body.password
+        const details = req.body.data
+
+    const email = details.email
+    const password = details.password
 
     const data = await Users.findOne({email:email})
 
@@ -24,7 +27,7 @@ const adminVerify = async(req,res)=>{
       return  res.status(403).send({message:"password Not match"})
         }
     }
-    
+
   return  res.status(404).send({message:'Admin Not Found'})
 
         

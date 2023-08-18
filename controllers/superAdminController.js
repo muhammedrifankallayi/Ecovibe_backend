@@ -5,12 +5,15 @@ const Users = require("../models/UserModel")
 const VerifySuper = async(req,res)=>{
     try {
 
-        console.log(req.body);
-        const email = req.body.email
-        const password = req.body.password
+      
+
+        const details = req.body.data
+        const email = details.email
+        const password = details.password
+        console.log(email);
     
         const data = await Users.findOne({email:email})
-    
+     console.log(data);
         if(data){
             if(password===data.password){
                 if(data.is_superAdmin===true){
@@ -21,9 +24,11 @@ const VerifySuper = async(req,res)=>{
             }else{
           return  res.status(403).send({message:"password Not match"})
             }
-        }
-     return   res.status(404).send({message:'Admin Not Found'})
+        }else{
+            return   res.status(404).send({message:'Admin Not Found'})
         
+        }
+   
         
     } catch (error) {
         
