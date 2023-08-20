@@ -23,7 +23,7 @@ if(userExist){
         email:email,
         mobile:mobile,
         password:password,
-        
+        Date: new Date()
      })
 
  const result  =  await user.save()

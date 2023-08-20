@@ -22,7 +22,7 @@ const UserSchema = new mongoose.Schema({
      type:String,
     
     },
-    Date_of_birth:{
+    Date:{
         type: Date
     },
     is_admin:{
@@ -36,6 +36,10 @@ const UserSchema = new mongoose.Schema({
     is_verified:{
         type:Boolean,
         default:false
+    },
+    is_blocked:{
+      type:Boolean,
+      default:false
     }
 })
 

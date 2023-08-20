@@ -5,7 +5,7 @@ const Users = require("../models/UserModel")
 const VerifySuper = async(req,res)=>{
     try {
 
-      
+      console.log("working");
 
         const details = req.body.data
         const email = details.email
@@ -37,6 +37,19 @@ const VerifySuper = async(req,res)=>{
     }
 }
 
+// get user detais 
+
+const getUser = async(req,res)=>{
+    try {
+        console.log("working getuser");
+        const data = await Users.find()
+       return res.status(200).json({data})
+    } catch (error) {
+        console.log(error.message);
+    }
+}
+
 module.exports = {
-    VerifySuper
+    VerifySuper,
+    getUser
 }
