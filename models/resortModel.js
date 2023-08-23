@@ -37,7 +37,31 @@ const resortSchema = new mongoose.Schema({
         type:Number,
         required:true
     },
+    surroundings:[
+      {
+      type:{
+        type_name:{
+            type:String
+        },
+        description:{
+            type:String
+        },
+        items:[
+          {
+            name:{
+                type:String
+               },
+               distence_From_Resort:{
+                type:Number
+               }
+          }
+        ]
+      }
+      }
+    ]
 
    
    
 })
+
+module.exports = mongoose.model("resorts",resortSchema);

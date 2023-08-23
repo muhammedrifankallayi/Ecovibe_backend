@@ -37,3 +37,5 @@ facilities:[
 
    
 })
+
+module.exports = mongoose.model("rooms",roomSchema);

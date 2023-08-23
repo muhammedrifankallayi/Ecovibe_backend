@@ -2,6 +2,7 @@ const Users = require("../models/UserModel")
 
 
 
+
 const VerifySuper = async(req,res)=>{
     try {
 
@@ -49,7 +50,28 @@ const getUser = async(req,res)=>{
     }
 }
 
+const blockUser = async(req,res)=>{
+    try {
+      
+       const id =  req.body.id
+
+      const data = await Users.findOne({_id:id})
+
+      console.log(data);
+
+      if(data.is_blocked===false){
+        await Users.findByIdAndUpdate({_id:id},{$set:{is_blocked:true}})
+      }else{
+        await Users.findByIdAndUpdate({_id:id},{$set:{is_blocked:false}})
+      }
+
+    } catch (error) {
+        console.log(error.message);
+    }
+}
+
 module.exports = {
     VerifySuper,
-    getUser
+    getUser,
+    blockUser
 }
