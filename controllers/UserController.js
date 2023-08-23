@@ -20,9 +20,9 @@ function generateOTP() {
 
   //  node mailer otp sender function
 
-function sendotp(Email) {
+function sendotp(Email , otp) {
     
-  var  otp = generateOTP()
+  
     const transporter = nodemailer.createTransport({
         host: 'smtp.gmail.com',
         port: 465,
@@ -36,36 +36,35 @@ function sendotp(Email) {
         from: 'esample157@gmail.com',
         to: Email,
         subject: 'Your OTP code',
-        html: `
-        <html>
-          <head>
-            <style>
-              /* Define your inline CSS styles here */
-              body {
-                font-family: Arial, sans-serif;
-                background-color: red;
-              }
-              h1 {
-                color: #007BFF;
-              }
-              p {
-                margin-bottom: 10px;
-              }
-              .otp-code {
-                font-size: 24px;
-                font-weight: bold;
-                color: #FF5733;
-              }
-            </style>
-          </head>
-          <body>
-            <h1>Your OTP Code</h1>
-            <p>Your OTP code is: <span class="otp-code">${otp}</span>.</p>
-            <p>Please use this code to complete your verification.</p>
-          </body>
-        </html>
-      `
-    
+       html: `
+    <html>
+      <head>
+        <style>
+          /* Define your inline CSS styles here */
+          body {
+            font-family: Arial, sans-serif;
+          }
+          h1 {
+            color: #007BFF;
+          }
+          p {
+            margin-bottom: 10px;
+          }
+          .otp-code {
+            font-size: 24px;
+            font-weight: bold;
+            color: #FF5733;
+          }
+        </style>
+      </head>
+      <body>
+        <h1>Your OTP Code</h1>
+        <p>Your OTP code is: <span class="otp-code">${otp}</span>.</p>
+        <p>Please use this code to complete your verification.</p>
+      </body>
+    </html>
+  `
+
     };
 
     transporter.sendMail(mailOptions, (error, info) => {
@@ -83,6 +82,10 @@ function sendotp(Email) {
 
 
 const Postregister = async(req,res)=>{
+
+
+
+
     try {
 console.log("works");
       const name   = req.body.userName
@@ -114,8 +117,13 @@ if(userExist){
      maxAge:60*60*24*1000
  })
  console.log(token);
+ var otp  = generateOTP()
 
- sendotp(result.email);
+ req.session.otp = otp
+
+ sendotp(result.email,otp);
+
+ console.log(req.session.otp);
 
  res.status(200).send({message:"success",token})
 
@@ -209,9 +217,27 @@ if (!token) {
   }
 
 
+const verifyOtp = async(req,res)=>{
+    try {
+    const userOtp = req.body.otp
+    const RealOtp = req.session.otp
+
+    if(userOtp===RealOtp){
+        res.status(200).send({message:"OTP verification successfull"})
+    }else{
+        res.status(401).send({message:"OTP incorrect"})
+    }
+    } catch (error) {
+        console.log(error.message);
+    }
+}
+
+
+
 module.exports = {
     Postregister,
     ValidateLOgin,
     Authenticate,
-    getUser
+    getUser,
+    verifyOtp
 }

@@ -9,6 +9,7 @@
    router.post('/userLogin',usercontroller.ValidateLOgin)
    router.get('/userLogin',usercontroller.Authenticate)
    router.get("/getUser",usercontroller.getUser)
+   router.post("/otp",usercontroller.verifyOtp)
    
 
 

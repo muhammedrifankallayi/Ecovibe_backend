@@ -4,13 +4,17 @@ const cookieparser = require("cookie-parser")
 const bodyParser = require("body-parser")
 const cors = require('cors');
 const UserRoute = require("./routes/userRout")
-
+const session = require("express-session");
 const adminRoute = require("./routes/adminRout")
 const superAdminRoute = require("./routes/superAdmin")
 
 
 const app = express()
-
+app.use(session({
+  secret: 'your-secret-key',
+  resave: false,
+  saveUninitialized: true
+}));
 
 app.use(cors({
     credentials:true,
