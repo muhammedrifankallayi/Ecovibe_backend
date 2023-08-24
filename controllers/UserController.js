@@ -112,20 +112,19 @@ if(userExist){
  const {_id} =  await result.toJSON()
 
  const token  = jwt.sign({_id:_id},"secret")
- res.cookie("jwt",token,{
-     httpOnly:true,
-     maxAge:60*60*24*1000
- })
+ 
  console.log(token);
  var otp  = generateOTP()
 
- req.session.otp = otp
+ 
+
+
 
  sendotp(result.email,otp);
 
- console.log(req.session.otp);
 
- res.status(200).send({message:"success",token})
+
+ res.status(200).send({otp:otp,token})
 
  }
 
@@ -152,10 +151,7 @@ if(UserData.is_blocked===true){
                 const {_id} =  await UserData.toJSON()
 
  const token  = jwt.sign({_id:_id},"secret")
- res.cookie("jwt",token,{
-     httpOnly:true,
-     maxAge:60*60*24*1000
- })
+ 
  
              res.status(200).send({message:"success",user:UserData.name,token})
                
@@ -217,16 +213,18 @@ if (!token) {
   }
 
 
-const verifyOtp = async(req,res)=>{
+const verifyuser = async(req,res)=>{
     try {
-    const userOtp = req.body.otp
-    const RealOtp = req.session.otp
 
-    if(userOtp===RealOtp){
-        res.status(200).send({message:"OTP verification successfull"})
-    }else{
-        res.status(401).send({message:"OTP incorrect"})
-    }
+        console.log(req.body.data);
+       const token = req.body.data
+
+       const encoded = jwt.verify(token,'secret')
+       const id = encoded._id
+
+       await User.findByIdAndUpdate({_id:id},{$set:{is_verified:true}})
+       res.status(200).send({message:"verification submitted"});
+   
     } catch (error) {
         console.log(error.message);
     }
@@ -239,5 +237,5 @@ module.exports = {
     ValidateLOgin,
     Authenticate,
     getUser,
-    verifyOtp
+    verifyuser
 }
