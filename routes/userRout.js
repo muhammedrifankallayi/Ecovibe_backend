@@ -10,6 +10,7 @@
    router.get('/userLogin',usercontroller.Authenticate)
    router.get("/getUser",usercontroller.getUser)
    router.post("/verify",usercontroller.verifyuser)
+   router.post("/hoster-req",usercontroller.saveReq)
    
 
 

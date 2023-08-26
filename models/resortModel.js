@@ -22,11 +22,30 @@ const resortSchema = new mongoose.Schema({
         type:String,
         required:true
     },
+    mobile:{
+      type:Number,
+      required:true
+    },
+    email:{
+      type:String,
+      required:true
+    },
+    is_approved:{
+      type:Boolean,
+     default:false
+    },
+    is_rejected:{
+    type:Boolean
+    },
+    date:{
+       type:Date,
+
+    },
     amenities:[
         {
             name: {
-              type: String,
-              required: true
+              type: String
+             
             },
             description: {
               type: String

@@ -1,5 +1,7 @@
 const Users = require("../models/UserModel")
 
+const Resort = require("../models/resortModel")
+
 
 
 
@@ -70,8 +72,66 @@ const blockUser = async(req,res)=>{
     }
 }
 
+
+
+//  getting resort hoster requests
+
+const getRequest = async(req,res)=>{
+    try {
+        
+        console.log("works getreqq");
+  const Data = await Resort.find({is_approved:false})
+
+  console.log(Data);
+
+ return res.status(200).send({Data,message:"success"})
+    
+
+
+    } catch (error) {
+        console.log(error.message);
+    }
+}
+
+
+// request approving 
+
+const approveRequest = async(req,res)=>{
+    try {
+          
+const id = req.params.id
+console.log(id);
+await Resort.findByIdAndUpdate({_id:id},{$set:{is_approved:true}})
+
+res.status(200).json({success:true})
+
+    } catch (error) {
+console.log(error.message);        
+    }
+}
+
+// request rejecting 
+
+const rejectRequest = async(req,res)=>{
+    try {
+       const id  = req.params.id
+
+       if(id!==null){
+        await Resort.findByIdAndUpdate({_id:id},{$set:{is_rejected:true}}) 
+res.status(200).json({success:true})
+       }
+    } catch (error) {
+        console.log(error.message);
+    }
+}
+
+
+
 module.exports = {
     VerifySuper,
     getUser,
-    blockUser
+    blockUser,
+    getRequest,
+    approveRequest,
+    rejectRequest
 }

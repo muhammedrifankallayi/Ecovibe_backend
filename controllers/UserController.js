@@ -2,6 +2,13 @@ const User = require("../models/UserModel")
 const jwt       =     require("jsonwebtoken")
 const nodemailer = require("nodemailer")
 const bcrypt    = require("bcrypt")
+const Resort = require("../models/resortModel")
+
+
+function tokenReader(token){
+  const decoded = jwt.verify(token, 'secret');
+  return decoded._id
+}
 
 
 //  funtion for generating random digits
@@ -231,11 +238,40 @@ const verifyuser = async(req,res)=>{
 }
 
 
+const saveReq = async(req,res)=>{
+  try {
+      
+ const data = req.body.data
+ const userId = tokenReader(req.body.token)
+const resortSave = new Resort({
+  hoster_id: userId,
+  resortName:data.resortName,
+  resortAdress:data.address,
+  resort_type:data.type,
+  location:data.location,
+  mobile:data.mobile,
+  email:data.email,
+  occupency:data.occupency,
+  date: new Date()
+  
+})
+
+await resortSave.save()
+
+ res.status(200).send({message:"data submitted successfull.."})   
+
+  } catch (error) {
+    console.log(error.message);
+  }
+}
+
+
 
 module.exports = {
     Postregister,
     ValidateLOgin,
     Authenticate,
     getUser,
-    verifyuser
+    verifyuser,
+    saveReq
 }
