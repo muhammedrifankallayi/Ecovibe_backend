@@ -8,7 +8,9 @@ router.get("/getUser",superAdminController.getUser)
 router.post("/blockUser",superAdminController.blockUser)
 router.get("/getRequests",superAdminController.getRequest)
 router.patch("/approveRequest/:id",superAdminController.approveRequest)
-router.patch("/rejectRequest/:id",superAdminController.rejectRequest)
+router.patch("/rejectedRequest/:id",superAdminController.rejectRequest)
+router.post("/savesubscription",superAdminController.saveSubscription)
+router.get("/getsubscription",superAdminController.getSubscription)
 
 
 

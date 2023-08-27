@@ -77,7 +77,15 @@ const resortSchema = new mongoose.Schema({
         ]
       }
       }
-    ]
+    ],
+
+    subcription_Date:{
+      type:Date
+        },
+        
+        subcription_End:{
+          type:Date
+        }
 
    
    

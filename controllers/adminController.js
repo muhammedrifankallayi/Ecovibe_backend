@@ -1,4 +1,9 @@
+
+//models
 const Users = require('../models/UserModel');
+const Subscription = require("../models/subscriptionModel")
+
+// modules
 const jwt = require("jsonwebtoken")
 
 
@@ -59,7 +64,11 @@ const decoded = jwt.verify(token, 'adminsecret'); // Verify and decode the token
     }
 }
 
+
+
+
 module.exports ={
     adminVerify,
-    getAdmin
+    getAdmin,
+ 
 }

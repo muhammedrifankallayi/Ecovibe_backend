@@ -40,6 +40,9 @@ const UserSchema = new mongoose.Schema({
     is_blocked:{
       type:Boolean,
       default:false
+    },
+    resort_id:{
+        type:String
     }
 })
 

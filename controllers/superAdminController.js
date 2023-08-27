@@ -1,5 +1,5 @@
 const Users = require("../models/UserModel")
-
+const Subscription = require("../models/subscriptionModel")
 const Resort = require("../models/resortModel")
 
 
@@ -101,9 +101,18 @@ const approveRequest = async(req,res)=>{
           
 const id = req.params.id
 console.log(id);
-await Resort.findByIdAndUpdate({_id:id},{$set:{is_approved:true}})
+  const update =  await Resort.findByIdAndUpdate({_id:id},{$set:{is_approved:true}})
 
-res.status(200).json({success:true})
+if(update){
+
+   const resortHoster = await Resort.findOne({_id:id})
+   await Users.findByIdAndUpdate({_id:resortHoster.hoster_id},{$set:{is_admin:true,resort_id:resortHoster._id}})
+    res.status(200).json({success:true})
+
+}else{
+res.status(401).json({success:true})
+
+}
 
     } catch (error) {
 console.log(error.message);        
@@ -114,12 +123,70 @@ console.log(error.message);
 
 const rejectRequest = async(req,res)=>{
     try {
+        console.log("works");
        const id  = req.params.id
 
        if(id!==null){
-        await Resort.findByIdAndUpdate({_id:id},{$set:{is_rejected:true}}) 
-res.status(200).json({success:true})
+    const update =     await Resort.findByIdAndUpdate({_id:id},{$set:{is_rejected:true}}) 
+      console.log(update);
+    if(update){
+        res.status(200).json({success:true})
+
+    }else{
+res.status(401).json({success:true})
+
+    }
        }
+    } catch (error) {
+        console.log(error.message);
+    }
+}
+
+const saveSubscription = async(req,res)=>{
+    try {
+        
+console.log("workinnnffgg");
+  const data = req.body.data
+
+ console.log(data);
+  const subcri = new Subscription({
+    title:data.title,
+    duration:data.duration,
+    type:data.type,
+    price:Number(data.price),
+    description:data.description
+  })
+
+  const result = await subcri.save()
+
+  if(result){
+    res.status(200).send({message:"success"})
+  }else{
+    res.status(401).send({message:"failed to save"})
+
+  }
+
+    } catch (error) {
+        console.log(error.message);
+    }
+}
+
+
+
+//  getting subscriotion daata
+
+const getSubscription = async(req,res)=>{
+    try {
+        
+
+const data = await Subscription.find()
+if(data){
+    res.status(200).json({data})
+
+}else{
+    res.status(401).send({message:"failed to fetch the data"})
+}
+
     } catch (error) {
         console.log(error.message);
     }
@@ -133,5 +200,7 @@ module.exports = {
     blockUser,
     getRequest,
     approveRequest,
-    rejectRequest
+    rejectRequest,
+    saveSubscription,
+    getSubscription
 }
