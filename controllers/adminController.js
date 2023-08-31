@@ -2,11 +2,17 @@
 //models
 const Users = require('../models/UserModel');
 const Subscription = require("../models/subscriptionModel")
+const Resort = require("../models/resortModel")
 
 // modules
 const jwt = require("jsonwebtoken")
 
 
+// token encoding 
+function tokenReader(token){
+    const decoded = jwt.verify(token, 'adminsecret');
+    return decoded._id
+  }
 
 
 const adminVerify = async(req,res)=>{
@@ -64,11 +70,29 @@ const decoded = jwt.verify(token, 'adminsecret'); // Verify and decode the token
     }
 }
 
+const   getresort  = async(req,res)=>{
+    try {
+        
+     const userId = tokenReader(req.query.token)
+
+     const resort  = await Resort.findOne({hoster_id:userId})
+     const user  = await Users.findById({_id:userId})
+
+     res.status(200).json({resort,user})
+
+
+    } catch (error) {
+        
+    }
+}
+
+
+
 
 
 
 module.exports ={
     adminVerify,
     getAdmin,
- 
+    getresort
 }

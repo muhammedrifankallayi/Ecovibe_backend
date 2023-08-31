@@ -178,14 +178,19 @@ if(UserData.is_blocked===true){
 }
 
 const Authenticate = async(req,res)=>{
-    const token = req.header('Authorization')?.split(' ')[1]; // Get the token from the header
+
+  const token = req.headers.authorization?.split(" ")[1];
+  // Get the token from the header
  
-    if (!token) {
-      return res.status(401).json({ message: 'Access denied. No token provided.',Authorization:false });
-    }
+  console.log(token); 
   
     try {
-      const decoded = jwt.verify(token, 'secret'); // Verify and decode the token
+
+      if (!token) {
+        return res.status(401).json({ message: 'Access denied. No token provided.',Authorization:false });
+      }
+
+      const decoded = jwt.verify(token,'secret'); // Verify and decode the token
      if(decoded){
         return res.status(200).json({ message: 'User Authentication has been successfull',Authorization:true });
      }
@@ -198,7 +203,9 @@ const Authenticate = async(req,res)=>{
   const getUser = async(req,res)=>{
     try {
    
-const token =  req.header('Authorization')?.split(' ')[1];
+      console.log("works");
+      console.log(req.headers);
+      const token = req.headers.authorization?.split(" ")[1];
 if (!token) {
     return res.status(401).json({ message: 'Access denied. No token provided.',Authorization:false });
   }
@@ -223,13 +230,14 @@ if (!token) {
 const verifyuser = async(req,res)=>{
     try {
 
-        console.log(req.body.data);
+console.log("works verify");
+
+        console.log(req.body)
        const token = req.body.data
 
-       const encoded = jwt.verify(token,'secret')
-       const id = encoded._id
+     
 
-       await User.findByIdAndUpdate({_id:id},{$set:{is_verified:true}})
+       await User.findOneAndUpdate({email:token},{$set:{is_verified:true}})
        res.status(200).send({message:"verification submitted"});
    
     } catch (error) {
@@ -265,6 +273,37 @@ await resortSave.save()
   }
 }
 
+const forgetotp  = async(req,res)=>{
+  try {
+const email = req.query.email
+const otp = generateOTP()
+sendotp(email,otp)
+console.log("otp sed");
+
+res.status(200).send({otp})
+
+
+
+  } catch (error) {
+    console.log(error.message);
+  }
+
+}
+
+
+const updatePassword = async(req,res)=>{
+  try {
+
+    const email = req.body.email
+    const password = req.body.password
+    await User.findOneAndUpdate({email:email},{$set:{password:password}})
+console.log("updated");
+    res.status(200).send({massage:"password updated"})
+    
+  } catch (error) {
+    console.log(error.message);
+  }
+}
 
 
 module.exports = {
@@ -273,5 +312,7 @@ module.exports = {
     Authenticate,
     getUser,
     verifyuser,
-    saveReq
+    saveReq,
+    forgetotp,
+    updatePassword
 }

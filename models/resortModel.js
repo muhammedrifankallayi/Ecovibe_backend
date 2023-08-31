@@ -78,6 +78,21 @@ const resortSchema = new mongoose.Schema({
       }
       }
     ],
+    restaurants:[
+      {
+        name:{
+          type:String,
+
+        },
+        distance:{
+          type:Number
+        },
+        is_list:{
+ type:Boolean,
+ default:true
+        }
+      }
+    ],
 
     subcription_Date:{
       type:Date

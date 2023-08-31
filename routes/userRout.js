@@ -11,6 +11,8 @@
    router.get("/getUser",usercontroller.getUser)
    router.post("/verify",usercontroller.verifyuser)
    router.post("/hoster-req",usercontroller.saveReq)
+   router.get("/forget-otp",usercontroller.forgetotp)
+   router.post("/newpassword",usercontroller.updatePassword)
    
 
 

@@ -1,6 +1,7 @@
 const Users = require("../models/UserModel")
 const Subscription = require("../models/subscriptionModel")
 const Resort = require("../models/resortModel")
+const jwt = require("jsonwebtoken")
 
 
 
@@ -20,7 +21,13 @@ const VerifySuper = async(req,res)=>{
         if(data){
             if(password===data.password){
                 if(data.is_superAdmin===true){
-                   return res.status(200).send({message:"success"})
+
+                    const {_id} =  await result.toJSON()
+
+                    const token  = jwt.sign({_id:_id},"superadminsecret")
+
+
+                   return res.status(200).send({message:"success",token})
                 }else{
                     res.status(404).send({message:"Not superAdmin"})
                 }
