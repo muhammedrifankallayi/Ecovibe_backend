@@ -12,6 +12,14 @@ router.get("/getresort",resortController.getResort)
 router.post("/saveaboutdata",resortController.saveResortData)
 router.post("/restaurantdata",resortController.saveRestaurent)
 router.get("/getrestaurants",resortController.getRestaurants)
+router.post("/surroundingdata",resortController.saveSurrounding)
+router.post("/itemsurrdata",resortController.saveitemsToSurroundings)
+router.get("/getsurroundings",resortController.getSurroundings)
+router.post("/deletesurrounding",resortController.deleteSurrounding)
+router.patch("/deleterestaurant",resortController.deleteRestaurant)
+router.put("/amemtiesdata",resortController.addAmenties)
+router.get("/getamenties",resortController.getAmenties)
+router.patch("/deleteamenties",resortController.deleteAmenties)
 
 
 

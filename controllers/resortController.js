@@ -104,6 +104,162 @@ const getRestaurants = async(req,res)=>{
     }
 }
 
+const getSurroundings = async(req,res)=>{
+    try {
+        
+const token  = req.headers.authorization?.split(" ")[1]
+const hosterId = tokenReader(token)
+
+const resortData = await Resorts.findOne({hoster_id:hosterId})
+
+const data = resortData.surroundings
+
+res.status(200).send({data})
+
+
+    } catch (error) {
+        console.log(error.message);
+    }
+}
+
+
+
+const saveSurrounding = async(req,res)=>{
+
+try {
+
+    const token = req.headers.authorization?.split(" ")[1]
+    const hosterId = tokenReader(token)
+
+    const surr = req.body.data
+   const data = {type_name:surr.type_name,description:surr.description}
+
+   await Resorts.findOneAndUpdate({hoster_id:hosterId},{$push:{surroundings:data}})
+    
+res.status(200).send({message:"success"})
+
+
+} catch (error) {
+    console.log(error.message);
+}
+
+
+}
+
+const saveitemsToSurroundings = async(req,res)=>{
+
+    try {
+
+        const token = req.headers.authorization?.split(" ")[1]
+        const hosterId = tokenReader(token)
+
+        const surr = req.body.data
+        const type_name = surr.type_name
+       
+        const newItem = {name:surr.name,   distance_From_Resort: parseInt(surr.distance_From_Resort) }
+
+        const resort = await Resorts.findOne({ hoster_id: hosterId });
+
+const surroundingToUpdate = resort.surroundings.find(surr => surr.type_name === type_name);
+
+surroundingToUpdate.items.push(newItem);
+
+await resort.save();
+res.status(200).send({message:"success"})
+
+    } catch (error) {
+        console.log(error.message);
+    }
+}
+
+
+const deleteSurrounding = async(req,res)=>{
+    try {
+        const token = req.headers.authorization?.split(" ")[1]
+        const hosterId = tokenReader(token)
+const type = req.body.data
+        await Resorts.findOneAndUpdate({hoster_id:hosterId},{$pull:{surroundings:{type_name:type}}})
+
+res.status(200).status({message:"success"})
+    } catch (error) {
+        console.log(error.message);
+    }
+}
+
+const deleteRestaurant = async(req,res)=>{
+    try {
+        
+const token = req.headers.authorization.split(" ")[1];
+const hosterId = tokenReader(token)
+const type = req.body.data
+
+await Resorts.findOneAndUpdate({hoster_id:hosterId},{$pull:{restaurants:{name:type}}})
+res.status(200).send({message:"success"})
+
+    } catch (error) {
+        console.log(erro.message);
+    }
+}
+
+
+
+
+  //  Amenties....
+
+const addAmenties = async(req,res)=>{
+    try {
+        
+
+        const token = req.headers.authorization.split(" ")[1];
+        const hosterId = tokenReader(token);
+  const amenti = req.body.data
+  const data = {name:amenti.name,description:amenti.description}
+        await Resorts.findOneAndUpdate({hoster_id:hosterId},{$push:{amenities:data}});
+
+        res.status(200).send({message:"successs"});
+
+
+
+    } catch (error) {
+        console.log(error.message);
+    }
+}
+
+const getAmenties = async(req,res)=>{
+    try {
+        
+
+        const token = req.headers.authorization.split(" ")[1];
+        const hosterId = tokenReader(token)
+
+        const ResortData = await Resorts.findOne({hoster_id:hosterId});
+        const amenties = ResortData.amenities
+
+        res.status(200).send({data:amenties})
+
+    } catch (error) {
+        console.log(error.message);
+    }
+}
+
+const deleteAmenties = async(req,res)=>{
+    try {
+        
+        const token = req.headers.authorization.split(" ")[1];
+        const hosterId = tokenReader(token)
+
+        const name = req.body.data
+
+        await Resorts.findOneAndUpdate({hoster_id:hosterId},{$pull:{amenities:{name:name}}})
+
+        res.status(200).send({message:"deleted amenti successfully"})
+
+
+    } catch (error) {
+        console.log(error.message);
+    }
+}
+
 
 
 
@@ -111,5 +267,13 @@ module.exports = {
     getResort,
     saveResortData,
     saveRestaurent,
-    getRestaurants
+    getRestaurants,
+    saveitemsToSurroundings,
+    saveSurrounding,
+    getSurroundings,
+    deleteSurrounding,
+    deleteRestaurant,
+    addAmenties,
+    getAmenties,
+    deleteAmenties
 }

@@ -49,6 +49,10 @@ const resortSchema = new mongoose.Schema({
             },
             description: {
               type: String
+            },
+            is_list:{
+              type:Boolean,
+              default:true
             }
           }
     ],
@@ -58,7 +62,7 @@ const resortSchema = new mongoose.Schema({
     },
     surroundings:[
       {
-      type:{
+    
         type_name:{
             type:String
         },
@@ -70,12 +74,16 @@ const resortSchema = new mongoose.Schema({
             name:{
                 type:String
                },
-               distence_From_Resort:{
+               distance_From_Resort:{
                 type:Number
                }
           }
-        ]
-      }
+        ],
+        is_list:{
+          type:Boolean,
+          default:true
+        }
+      
       }
     ],
     restaurants:[
