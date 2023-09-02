@@ -101,6 +101,10 @@ const resortSchema = new mongoose.Schema({
         }
       }
     ],
+    images:{
+      type:Array,
+      
+    },
 
     subcription_Date:{
       type:Date
@@ -108,6 +112,14 @@ const resortSchema = new mongoose.Schema({
         
         subcription_End:{
           type:Date
+        }
+        ,
+        show_img:{
+          type:Array
+          
+        },
+        Banner_img:{
+            type:String
         }
 
    

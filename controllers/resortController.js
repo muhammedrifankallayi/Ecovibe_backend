@@ -260,6 +260,104 @@ const deleteAmenties = async(req,res)=>{
     }
 }
 
+const submitImages = async(req,res)=>{
+    try {
+        const token = req.headers.authorization.split(" ")[1];
+        const hosterId = tokenReader(token)
+        console.log(req.files);
+const img = []
+       for (let i=0 ; i<req.files.length;i++){
+img.push(req.files[i].filename)
+       }
+
+
+         await Resorts.findOneAndUpdate({hoster_id:hosterId},{$push: { images: { $each: img } }})
+
+       res.status(200).send({message:"success"})
+
+
+        
+    } catch (error) {
+        console.log(error.message);
+    }
+}
+
+const getImages = async(req,res)=>{
+    try {
+        const token = req.headers.authorization.split(" ")[1];
+        const hosterId = tokenReader(token)
+
+        const ResortData = await Resorts.findOne({hoster_id:hosterId})
+
+    const images = ResortData.images
+    console.log(ResortData.images);
+
+   res.status(200).send({images})
+
+    } catch (error) {
+        console.log(error.message);
+    }
+}
+
+
+const addToMainImage = async(req,res)=>{
+    try {
+          
+        const token = req.headers.authorization.split(" ")[1];
+        const hosterId = tokenReader(token)
+
+        const index = parseInt(req.body.index)
+        const imagesData = await Resorts.findOne({hoster_id:hosterId})
+        const newImg = imagesData.images[index] 
+        if(imagesData.show_img.length>5){
+            const deletionImg = imagesData.show_img[0]
+            await Resorts.findOneAndUpdate({hoster_id:hosterId},{$pull:{show_img:deletionImg}})
+        }
+
+        await Resorts.findOneAndUpdate({hoster_id:hosterId},{$push:{show_img:newImg}})
+
+        res.status(200).send({message:"image setting successfull"})
+
+    } catch (error) {
+        console.log(error.message);
+    }
+}
+
+const addAsBanner = async(req,res)=>{
+    try {
+        const token = req.headers.authorization.split(" ")[1];
+        const hosterId = tokenReader(token)
+
+        const index = parseInt(req.body.index)
+        const ResortData = await Resorts.findOne({hoster_id:hosterId})
+        const BannerImg = ResortData.images[index]
+        await Resorts.findOneAndUpdate({hoster_id:hosterId},{$set:{Banner_img:BannerImg}})
+        res.status(200).send({message:"Banner image updated successfull"})
+
+
+    } catch (error) {
+        console.log(error.message);
+    }
+}
+
+const deleteImg = async(req,res)=>{
+    try {
+        const token = req.headers.authorization.split(" ")[1];
+        const hosterId = tokenReader(token)
+
+     const index = parseInt(req.body.index)
+     const ResortData = await Resorts.findOne({hoster_id:hosterId})
+     const deletionImg = ResortData.images[index]
+     await Resorts.findOneAndUpdate({hoster_id:hosterId},{$pull:{images:deletionImg}}).then(()=>{
+        res.status(200).send({message:"image deletion successfull"})
+     })
+
+
+    } catch (error) {
+        console.log(error.message);
+    }
+}
+
 
 
 
@@ -275,5 +373,10 @@ module.exports = {
     deleteRestaurant,
     addAmenties,
     getAmenties,
-    deleteAmenties
+    deleteAmenties,
+    submitImages,
+    getImages,
+    addToMainImage,
+    addAsBanner,
+    deleteImg
 }

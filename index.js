@@ -8,7 +8,6 @@ const session = require("express-session");
 const adminRoute = require("./routes/adminRout")
 const superAdminRoute = require("./routes/superAdmin")
 
-
 const app = express()
 app.use(session({
   secret: 'your-secret-key',
@@ -30,6 +29,9 @@ app.use(express.json())
 app.use("/",UserRoute)
 app.use("/admin",adminRoute)
 app.use("/superAdmin",superAdminRoute)
+
+app.use('/public', express.static('./public/resort_img'));
+
 
 
 

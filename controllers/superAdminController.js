@@ -9,7 +9,7 @@ const jwt = require("jsonwebtoken")
 const VerifySuper = async(req,res)=>{
     try {
 
-      console.log("working");
+      console.log("working super admin");
 
         const details = req.body.data
         const email = details.email
@@ -22,11 +22,11 @@ const VerifySuper = async(req,res)=>{
             if(password===data.password){
                 if(data.is_superAdmin===true){
 
-                    const {_id} =  await result.toJSON()
+                    const {_id} =  await data.toJSON()
 
                     const token  = jwt.sign({_id:_id},"superadminsecret")
 
-
+console.log("success");
                    return res.status(200).send({message:"success",token})
                 }else{
                     res.status(404).send({message:"Not superAdmin"})
