@@ -290,9 +290,11 @@ const getImages = async(req,res)=>{
         const ResortData = await Resorts.findOne({hoster_id:hosterId})
 
     const images = ResortData.images
+    const banner = ResortData.Banner_img
+    const mainImg = ResortData.show_img
     console.log(ResortData.images);
 
-   res.status(200).send({images})
+   res.status(200).send({images,banner,mainImg})
 
     } catch (error) {
         console.log(error.message);

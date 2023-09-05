@@ -1,7 +1,7 @@
    const {Router}  = require("express")
   
    const usercontroller = require("../controllers/UserController")
-
+   const bookingController = require("../controllers/bookingController")
 
 
    const router = Router()
@@ -38,6 +38,8 @@ const upload = multer({ storage: storage })
       }
    })
 
+   router.get("/getResorts",bookingController.getResorts)
+   router.get("/getSingleView",bookingController.getSingleView)
 
 
    module.exports =router
