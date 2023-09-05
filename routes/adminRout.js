@@ -2,6 +2,7 @@ const {Router}  = require("express")
 
 const adminController = require("../controllers/adminController")
 const resortController = require("../controllers/resortController")
+const roomController = require("../controllers/roomController")
 const multer = require("multer")
 const path = require("path")
 
@@ -45,6 +46,7 @@ router.get("/getimages",resortController.getImages)
 router.patch("/addToMainImg",resortController.addToMainImage)
 router.patch("/addAsBanner",resortController.addAsBanner)
 router.patch("/deleteImg",resortController.deleteImg)
+router.post("/roomsubmit",roomController.submitRoom)
 
 
 
