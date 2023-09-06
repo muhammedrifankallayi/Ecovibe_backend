@@ -1,5 +1,6 @@
 const Rooms = require("../models/roomModel")
 const Resorts = require("../models/resortModel")
+const jwt  = require("jsonwebtoken")
 
 
 //functions
@@ -16,9 +17,11 @@ function tokenReader(token){
 
 const submitRoom = async(req,res)=>{
 
+console.log('submitroom');
+
     try {
-        const data = req.data
-        const token =  req.headers.authentication.split("")[1]
+        const data = req.body.data
+        const token = req.headers.authorization?.split(" ")[1];
         const hoster_id = tokenReader(token)
         
 const resort = await Resorts.findOne({hoster_id:hoster_id})
@@ -29,6 +32,8 @@ if(!hoster_id | resort){
 
 
 if(!isRoom){
+
+    console.log("rooms creating");
     const room = new Rooms({
         hoster_id:hoster_id,
         resort_id:resort._id,
@@ -47,7 +52,9 @@ if(!isRoom){
         ]
     })
 
-    await room.save()
+    await room.save().then(()=>{
+        res.status(200).send({message:"success"})
+    })
 }else{
     const room  =   {
         roomNumber:parseInt(data.roomNumber),
@@ -76,7 +83,28 @@ if(!isRoom){
     }
 }
 
+ const getRoomdata = async(req,res)=>{
+    try {
+       
+        const token = req.headers.authorization?.split(" ")[1];
+        const hoster_id = tokenReader(token)
+
+        const roomData = await Rooms.findOne({hoster_id:hoster_id})
+
+        if(roomData){
+            res.status(200).send({data:roomData.rooms})
+        }
+        
+    
+
+    } catch (error) {
+        console.log(error.message);
+    }
+ }
+
+
 
 module.exports = {
-    submitRoom
+    submitRoom,
+    getRoomdata
 }

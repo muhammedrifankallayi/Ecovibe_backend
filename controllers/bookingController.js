@@ -2,7 +2,7 @@ const jwt = require("jsonwebtoken")
 
 const Resorts = require("../models/resortModel");
 const Users = require("../models/UserModel");
-
+const Rooms = require("../models/roomModel")
 
 
 
@@ -24,9 +24,16 @@ const getSingleView = async(req,res)=>{
         console.log("singleview");
    const id = req.query.id
    const data = await Resorts.findById({_id:id});
+   const roomdata = await Rooms.findOne({resort_id:id})
 
+   if(roomdata){
+    res.status(200).json({data,mainImg:data.show_img.slice(0, 4),rooms:roomdata.rooms})
+   }else{
+    res.status(200).json({data,mainImg:data.show_img.slice(0, 4),rooms:[]})
+
+   }
    
-   res.status(200).json({data,mainImg:data.show_img.slice(0, 4)})
+  
 
     } catch (error) {
         console.log(error.message);

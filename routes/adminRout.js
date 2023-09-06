@@ -47,6 +47,7 @@ router.patch("/addToMainImg",resortController.addToMainImage)
 router.patch("/addAsBanner",resortController.addAsBanner)
 router.patch("/deleteImg",resortController.deleteImg)
 router.post("/roomsubmit",roomController.submitRoom)
+router.get("/getroomdata",roomController.getRoomdata)
 
 
 
