@@ -2,8 +2,7 @@
   
    const usercontroller = require("../controllers/UserController")
    const bookingController = require("../controllers/bookingController")
-
-
+const userdecoder = require("../middlewares/userDecoder")
    const router = Router()
 
 
@@ -18,6 +17,13 @@ const storage = multer.diskStorage({
         callBack(null, `FunOfHeuristic_${file.originalname}`)
     }
   })
+
+
+
+ 
+
+
+
   
 const upload = multer({ storage: storage })
 
@@ -29,17 +35,13 @@ const upload = multer({ storage: storage })
    router.post("/hoster-req",usercontroller.saveReq)
    router.get("/forget-otp",usercontroller.forgetotp)
    router.post("/newpassword",usercontroller.updatePassword)
-   router.post("/file",upload.single("file"),(req,res)=>{
-      try {
-         console.log("haiiii");
-         console.log(req.file);
-      } catch (error) {
-         console.log(error.message);
-      }
-   })
+   router.post("/file",upload.single("file"))
 
    router.get("/getResorts",bookingController.getResorts)
    router.get("/getSingleView",bookingController.getSingleView)
 
-
+   router.post("/availability",bookingController.checkAvailability)
+   router.get("/getroom",bookingController.getRoomData)
+   router.post("/placebooking",userdecoder.decoder,bookingController.placeBooking)
+   router.patch("/confirmbooking",userdecoder.decoder,bookingController.confirmBooking) 
    module.exports =router

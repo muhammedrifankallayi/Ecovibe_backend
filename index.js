@@ -7,6 +7,7 @@ const UserRoute = require("./routes/userRout")
 const session = require("express-session");
 const adminRoute = require("./routes/adminRout")
 const superAdminRoute = require("./routes/superAdmin")
+const jwt = require("jsonwebtoken")
 
 const app = express()
 app.use(session({
@@ -24,6 +25,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 app.use(express.json())
+
 
 
 app.use("/",UserRoute)
