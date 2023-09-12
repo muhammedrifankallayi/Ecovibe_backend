@@ -16,9 +16,8 @@ function tokenReader(token){
 
 
 const adminVerify = async(req,res)=>{
-    console.log("admin working");
 
-    console.log(req.body,'data success');
+  
     try {
 
         const details = req.body.data
@@ -27,6 +26,23 @@ const adminVerify = async(req,res)=>{
     const password = details.password
 
     const data = await Users.findOne({email:email})
+
+    const adminId = data._id
+
+    const resortData = await Resort.findOne({hoster_id:adminId})
+console.log(resortData.subcription_End+"subcription_End");
+const currentDate = new Date()
+
+const expireDate = new Date(resortData.subcription_End)
+
+     if(expireDate>currentDate){
+      return  res.status(400).send({message:"subscription expired . please purchase a plan",id:data._id})
+     }else if(!resortData.subcription_End){
+      return  res.status(400).send({message:" please purchase a subscription plan",id:data._id})
+
+     }
+
+
 
     if(data){
         if(password===data.password){

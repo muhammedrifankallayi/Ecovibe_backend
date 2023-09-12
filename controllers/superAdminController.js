@@ -2,7 +2,7 @@ const Users = require("../models/UserModel")
 const Subscription = require("../models/subscriptionModel")
 const Resort = require("../models/resortModel")
 const jwt = require("jsonwebtoken")
-
+const notification = require("../models/notificationModel")
 
 
 
@@ -108,12 +108,38 @@ const approveRequest = async(req,res)=>{
           
 const id = req.params.id
 console.log(id);
+
   const update =  await Resort.findByIdAndUpdate({_id:id},{$set:{is_approved:true}})
 
+ 
 if(update){
 
    const resortHoster = await Resort.findOne({_id:id})
    await Users.findByIdAndUpdate({_id:resortHoster.hoster_id},{$set:{is_admin:true,resort_id:resortHoster._id}})
+   const dataUser = await Users.findById({_id:resortHoster.hoster_id})
+
+
+   const data = {text:`Hi ${dataUser.name} , your request for your resort hosting has been successfully approve by Ecovibe.com admin 
+   <button class="btn btn-success" routerLink="/subscription">Go to Home</button>
+`,redirection:"/subscription"}
+
+
+const notifydata = await notification.findOne({user_id:dataUser._id})
+
+if(notifydata){
+  await notification.findOneAndUpdate({user_id:dataUser._id},{$push:{notification:data}})
+}else{
+    const notify = new notification({
+        user_id:dataUser._id,
+        notification:data
+       })
+       await notify.save()
+}
+
+
+ 
+
+
     res.status(200).json({success:true})
 
 }else{
@@ -135,6 +161,23 @@ const rejectRequest = async(req,res)=>{
 
        if(id!==null){
     const update =     await Resort.findByIdAndUpdate({_id:id},{$set:{is_rejected:true}}) 
+    const resortHoster = await Resort.findOne({_id:id})
+   const dataUser = await Users.findById({_id:resortHoster.hoster_id})
+
+   const data = {text:`sorry, dear ${dataUser.name} , your request for your resort hosting has been rejected by Ecovibe.com admin  because of some issues`}
+
+
+const notifydata = await notification.findOne({user_id:dataUser._id})
+
+if(notifydata){
+  await notification.findOneAndUpdate({user_id:dataUser._id},{$push:{notification:data}})
+}else{
+    const notify = new notification({
+        user_id:dataUser._id,
+        notification:data
+       })
+       await notify.save()
+}
       console.log(update);
     if(update){
         res.status(200).json({success:true})

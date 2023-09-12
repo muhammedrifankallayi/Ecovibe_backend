@@ -3,6 +3,8 @@ const jwt       =     require("jsonwebtoken")
 const nodemailer = require("nodemailer")
 const bcrypt    = require("bcrypt")
 const Resort = require("../models/resortModel")
+const Subscriptions = require("../models/subscriptionModel")
+const Notifications = require("../models/notificationModel")
 
 
 function tokenReader(token){
@@ -94,7 +96,6 @@ const Postregister = async(req,res)=>{
 
 
     try {
-console.log("works");
       const name   = req.body.userName
       const email  = req.body.email
       const mobile = parseInt(req.body.mobile)
@@ -120,7 +121,6 @@ if(userExist){
 
  const token  = jwt.sign({_id:_id},"secret")
  
- console.log(token);
  var otp  = generateOTP()
 
  
@@ -183,7 +183,6 @@ const Authenticate = async(req,res)=>{
  
   // Get the token from the header
  
-  console.log(token); 
   
     try {
 
@@ -204,7 +203,6 @@ const Authenticate = async(req,res)=>{
   const getUser = async(req,res)=>{
     try {
    
-      console.log("works");
       console.log(req.headers);
       const token = req.headers.authorization?.split(" ")[1];
 if (!token) {
@@ -216,9 +214,7 @@ if (!token) {
   if(decoded){
     const id = decoded._id
 
-    console.log(id+"this is my id ");
   const user = await User.findById({_id:id})
-  console.log(user);
     res.status(200).json({user})
   }
 
@@ -231,9 +227,7 @@ if (!token) {
 const verifyuser = async(req,res)=>{
     try {
 
-console.log("works verify");
 
-        console.log(req.body)
        const token = req.body.data
 
      
@@ -251,7 +245,7 @@ const saveReq = async(req,res)=>{
   try {
       
  const data = req.body.data
- const userId = tokenReader(req.body.token)
+ const userId = req.user_id
 const resortSave = new Resort({
   hoster_id: userId,
   resortName:data.resortName,
@@ -279,7 +273,6 @@ const forgetotp  = async(req,res)=>{
 const email = req.query.email
 const otp = generateOTP()
 sendotp(email,otp)
-console.log("otp sed");
 
 res.status(200).send({otp})
 
@@ -306,6 +299,135 @@ console.log("updated");
   }
 }
 
+const getSubscriptions = async(req,res)=>{
+  try {
+    
+  const data = await Subscriptions.find({is_list:true})
+
+  res.status(200).send({data})
+
+
+  } catch (error) {
+    console.log(error.message);
+  }
+}
+const subscriptionPurchase = async(req,res)=>{
+  try {
+
+    const subData = req.body.data
+    const paymentId = subData.payment_id
+    const subscriptionId = subData.id
+    const userId  =   subData.userId?subData.userId:req.user_id
+
+
+const data = await User.findById({_id:userId})
+const subscriptionData = await Subscriptions.findOne({_id:subscriptionId})
+const duration = parseInt(subscriptionData.duration)
+const type = subscriptionData.type
+const today = new Date()
+const expireDate = await dateCalculate(duration,type)
+console.log(expireDate , "expiredateee");
+if(data.is_admin===true){
+await Resort.findOneAndUpdate({hoster_id:userId},{$set:{subcription_Date:today,subcription_End:expireDate}}).then(()=>{
+  res.status(200).json({message:"Subscription purchased successfully"})
+})
+  
+}else{
+  res.status(400).send({message:"you are not approved to be a admin, send permission for hosting "})
+}
+  } catch (error) {
+    console.log(error.message);
+  }
+}
+
+function dateCalculate(duration, type) {
+  var today = new Date();
+
+  if (type === 'Monthly') {
+    var futureDate = new Date(today);
+    futureDate.setMonth(today.getMonth() + parseInt(duration));
+    return futureDate;
+  } else {
+    var futureDate = new Date(today);
+    futureDate.setFullYear(today.getFullYear() + parseInt(duration));
+    return futureDate;
+  }
+
+
+
+}
+
+const isAdmin = async(req,res)=>{
+  try {
+    const userId = req.query.id? req.query.id : req.user_id
+    const data = await User.findById({_id:userId})
+
+    if(data.is_admin!==true){
+      res.status(400).send({message:"you are not approved to be a admin, send permission for hosting "})
+
+    }else{
+      res.status(200).send({message:"success"})
+    }
+
+    
+
+  } catch (error) {
+    console.log(error.message);
+  }
+}
+
+const notification = async(req,res)=>{
+  try {
+    
+const userId = req.user_id
+const Notifydata = await Notifications.findOne({user_id:userId})
+
+const data = Notifydata.notification
+
+res.status(200).send({data})
+
+
+
+
+  } catch (error) {
+    
+  }
+}
+
+const notifiLength = async(req,res)=>{
+  try {
+     const notification = await Notifications.aggregate([
+      {
+        $match: {
+          user_id: req.user_id, // Match documents with the specified user_id
+        },
+      },
+      {
+        $unwind: '$notification', // Deconstruct the notification array
+      },
+      {
+        $match: {
+          'notification.is_view': false, // Match documents where is_view is false
+        },
+      },
+      {
+        $group: {
+          _id: '$_id', // Group by the document's _id
+          count: { $sum: 1 }, // Calculate the count of matching notifications
+        },
+      },
+    ])
+res.status(200).send({count:notification[0].count})
+
+
+
+
+  } catch (error) {
+    console.log(error.message);
+  }
+}
+
+
 
 module.exports = {
     Postregister,
@@ -315,5 +437,10 @@ module.exports = {
     verifyuser,
     saveReq,
     forgetotp,
-    updatePassword
+    updatePassword,
+    getSubscriptions,
+    subscriptionPurchase,
+    isAdmin,
+    notification,
+    notifiLength
 }

@@ -120,6 +120,11 @@ const resortSchema = new mongoose.Schema({
         },
         Banner_img:{
             type:String
+        },
+
+        reviews:{
+          type:Array,
+          
         }
 
    
