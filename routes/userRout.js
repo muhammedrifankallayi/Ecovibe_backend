@@ -2,6 +2,9 @@
   
    const usercontroller = require("../controllers/UserController")
    const bookingController = require("../controllers/bookingController")
+   const chatController = require("../controllers/chatController")
+
+
 const userdecoder = require("../middlewares/userDecoder")
    const router = Router()
 
@@ -50,4 +53,8 @@ const upload = multer({ storage: storage })
 
    router.get("/notifications",userdecoder.decoder,usercontroller.notification)
    router.get("/getnotificationlength",userdecoder.decoder,usercontroller.notifiLength)
+
+   router.get("/chatview",userdecoder.decoder,chatController.viewChatMessages)
+   router.post("/submitmsg",userdecoder.decoder,chatController.submitMsg)
+   router.get("/userchatlist",userdecoder.decoder,chatController.chatList) 
    module.exports =router

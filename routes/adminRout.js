@@ -1,8 +1,13 @@
 const {Router}  = require("express")
 
+
 const adminController = require("../controllers/adminController")
 const resortController = require("../controllers/resortController")
 const roomController = require("../controllers/roomController")
+const chatController = require("../controllers/chatController")
+
+const admindecoder = require("../middlewares/userDecoder")
+
 const multer = require("multer")
 const path = require("path")
 
@@ -48,6 +53,10 @@ router.patch("/addAsBanner",resortController.addAsBanner)
 router.patch("/deleteImg",resortController.deleteImg)
 router.post("/roomsubmit",roomController.submitRoom)
 router.get("/getroomdata",roomController.getRoomdata)
+
+router.post("/adminchatsubmit",admindecoder.adminDecoder,chatController.adminSubmitMsg)
+router.get("/adminchatlist",admindecoder.adminDecoder,chatController.adminChatList)
+router.get("/adminchatview",admindecoder.adminDecoder,chatController.adminSingleViewChat)
 
 
 
