@@ -1,6 +1,7 @@
 
 const ChatConnections = require("../models/chatConnectionModel");
 const ChatMessages = require("../models/chatMessageModel");
+const Resorts = require("../models/resortModel")
 
 
 
@@ -14,8 +15,8 @@ const viewChatMessages = async(req,res)=>{
   
  const connection = await ChatConnections.findOne({user_id:userId,admin_id:adminId})
      const messageData = await ChatMessages.find({connectionId:connection._id})
-     console.log(messageData);
-     res.status(200).send({data:messageData})
+    
+     res.status(200).send({data:messageData,id:userId,cId:connection._id})
 
     } catch (error) {
         console.log(error.message);
@@ -30,7 +31,7 @@ const submitMsg = async(req,res)=>{
      const adminId = req.body.data.id
 
      const ConnectionData = await ChatConnections.findOne({user_id:userId,admin_id:adminId})
-     var connectionsId = ConnectionData?ConnectionData._id:null
+     var connectionsId =''
      if(!ConnectionData){
         const chatconnet = new ChatConnections({
             user_id:userId,
@@ -38,8 +39,11 @@ const submitMsg = async(req,res)=>{
         })
        const connect =  await chatconnet.save()
        connectionsId = connect._id 
-        await ChatConnections.findByIdAndUpdate({_id:connect._id},{$set:{lastmessage:message}})
+     }else{
+        connectionsId = ConnectionData._id
      }
+     await ChatConnections.findByIdAndUpdate({_id:connectionsId},{$set:{lastmessage:message}})
+
 
 
 
@@ -50,9 +54,9 @@ const submitMsg = async(req,res)=>{
         message:message
      })
 
-     await NewMsg.save()
+    const data =  await NewMsg.save()
      
-     res.status(200).send({})
+     res.status(200).send({data})
 
     } catch (error) {
         console.log(error.messsage);
@@ -62,9 +66,9 @@ const submitMsg = async(req,res)=>{
 const chatList = async(req,res)=>{
     try {
          const userId = req.user_id
-
-         const connectionData = await ChatConnections.find({user_id:userId})
-         res.status(200).send({list:connectionData})
+       
+         const connectionData = await ChatConnections.find({user_id:userId}).populate("admin_id")
+         res.status(200).send({list:connectionData,userId})
 
 
     } catch (error) {
@@ -77,7 +81,8 @@ const adminChatList = async(req,res)=>{
     try {
         
    const adminId = req.admin_id
-   const chatList = await ChatConnections.find({admin_id:adminId})
+   const resort = await Resorts.findOne({hoster_id:adminId})
+   const chatList = await ChatConnections.find({admin_id:resort._id}).populate("user_id")
 
    res.status(200).send({list:chatList})
    
@@ -92,30 +97,38 @@ const adminSingleViewChat = async(req,res)=>{
     try {
         const adminId = req.admin_id
         const userId = req.query.id
-        const connect = await ChatConnections.findOne({user_id:userId,admin_id:adminId})
+        const resort = await Resorts.findOne({hoster_id:adminId})
+        const connect = await ChatConnections.findOne({user_id:userId,admin_id:resort._id})
         const messages = await ChatMessages.find({connectionId:connect._id})
-        res.status(200).send({data:messages})
+        res.status(200).send({data:messages,id:resort._id,cId:connect._id})
     } catch (error) {
         console.log(error.message);
     }
 }
 const adminSubmitMsg = async(req,res)=>{
     try {
-        
+
      const adminId = req.admin_id
      const userId = req.body.data.user_id
      const message = req.body.data.text
-     const connect = await ChatConnections.findOne({user_id:userId,admin_id:adminId})
+
+
+     const resort = await Resorts.findOne({hoster_id:adminId})
+    
+     const connect = await ChatConnections.findOne({user_id:userId,admin_id:resort._id})
      const NewMsg = new ChatMessages({
-        fromId:adminId,
+        fromId:resort._id,
         toId:userId,
-        connectionId:connect._id
+        connectionId:connect._id,
+        message:message
      })
-     await NewMsg.save();
+     const data = await NewMsg.save();
      await ChatConnections.findByIdAndUpdate({_id:connect._id},{$set:{lastmessage:message}})
-     res.status(200).send({})
+
+
+     res.status(200).send({message:"success",data})
     } catch (error) {
-        console.log(error.massage);
+        console.log(error.message);
     }
 }
 

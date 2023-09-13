@@ -11,7 +11,7 @@ const getResorts = async (req, res) => {
     try {
 
         const data = await Resorts.find()
-        console.log(data);
+   
         res.status(200).json({ data })
 
     } catch (error) {
@@ -22,7 +22,7 @@ const getResorts = async (req, res) => {
 
 const getSingleView = async (req, res) => {
     try {
-        console.log("singleview");
+      
         const id = req.query.id
         const data = await Resorts.findById({ _id: id });
         const roomdata = await Rooms.findOne({ resort_id: id })
@@ -84,13 +84,13 @@ console.log(error.message);
        
         const resort_id =  req.query.resort_id
         const room_id  =  req.query.room_id
-        console.log(room_id);
+     
         const roomData = await Rooms.findOne({resort_id:resort_id})
         const resortData = await Resorts.findById({_id:resort_id})
         const room = roomData.rooms.filter((room)=>{
             return  room._id.toString() === room_id
         })
-        console.log(room);
+      
 
         res.status(200).send({room,resortData})
 
@@ -103,8 +103,7 @@ console.log(error.message);
 
 const placeBooking = async(req,res)=>{
     try {
-        console.log('working ..booking');
-        console.log(req.user_id);
+       
 const bookingdata = req.body.data
 const userId = req.user_id
 const name = bookingdata.name

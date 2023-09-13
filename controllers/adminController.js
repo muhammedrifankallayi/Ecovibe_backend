@@ -35,7 +35,7 @@ const currentDate = new Date()
 
 const expireDate = new Date(resortData.subcription_End)
 
-     if(expireDate>currentDate){
+     if(expireDate<currentDate){
       return  res.status(400).send({message:"subscription expired . please purchase a plan",id:data._id})
      }else if(!resortData.subcription_End){
       return  res.status(400).send({message:" please purchase a subscription plan",id:data._id})
