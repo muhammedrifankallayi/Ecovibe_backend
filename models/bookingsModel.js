@@ -42,6 +42,10 @@ default:false
     payment_id:{
         type:String,
 
+    },
+    date:{
+        type:Date,
+        default: new Date()
     }
 })
 

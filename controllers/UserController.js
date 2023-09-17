@@ -5,6 +5,7 @@ const bcrypt    = require("bcrypt")
 const Resort = require("../models/resortModel")
 const Subscriptions = require("../models/subscriptionModel")
 const Notifications = require("../models/notificationModel")
+const Sales = require("../models/superAdminsalesModel")
 
 
 function tokenReader(token){
@@ -203,7 +204,7 @@ const Authenticate = async(req,res)=>{
   const getUser = async(req,res)=>{
     try {
    
-      console.log(req.headers);
+      
       const token = req.headers.authorization?.split(" ")[1];
 if (!token) {
     return res.status(401).json({ message: 'Access denied. No token provided.',Authorization:false });
@@ -291,7 +292,7 @@ const updatePassword = async(req,res)=>{
     const email = req.body.email
     const password = req.body.password
     await User.findOneAndUpdate({email:email},{$set:{password:password}})
-console.log("updated");
+
     res.status(200).send({massage:"password updated"})
     
   } catch (error) {
@@ -322,13 +323,18 @@ const subscriptionPurchase = async(req,res)=>{
 
 const data = await User.findById({_id:userId})
 const subscriptionData = await Subscriptions.findOne({_id:subscriptionId})
+const resort = await Resort.findOne({hoster_id:userId})
+
 const duration = parseInt(subscriptionData.duration)
 const type = subscriptionData.type
 const today = new Date()
 const expireDate = await dateCalculate(duration,type)
-console.log(expireDate , "expiredateee");
+const sale = new Sales({resortId:resort._id,subscriptionId:subscriptionData._id,type:subscriptionData.type,price:parseInt(subscriptionData.price),payment_id:paymentId})
+
 if(data.is_admin===true){
+await sale.save()
 await Resort.findOneAndUpdate({hoster_id:userId},{$set:{subcription_Date:today,subcription_End:expireDate}}).then(()=>{
+
   res.status(200).json({message:"Subscription purchased successfully"})
 })
   
@@ -429,6 +435,36 @@ res.status(200).send({count:notification[0].count})
 
 
 
+const editProfile = async(req,res)=>{
+  try {
+const data = req.body.data
+    const user_id = req.user_id
+    await User.findByIdAndUpdate({_id:user_id},{$set:{
+      name:data.name,
+      email:data.email,
+      mobile:data.mobile,
+      age:data.age
+    }}).then(()=>res.status(200).send({message:"successfully saved"}))
+    
+  } catch (error) {
+    console.log(error.message);
+  }
+}
+
+const userProfileImage = async(req,res)=>{
+  try {
+    
+   const userId = req.user_id
+console.log(req);
+   await User.findByIdAndUpdate({_id:userId},{$set:{profile_img:req.file.filename}})
+   res.status(200).send({message:"image updated"})
+
+  } catch (error) {
+    console.log(error.message);
+  }
+}
+
+
 module.exports = {
     Postregister,
     ValidateLOgin,
@@ -442,5 +478,7 @@ module.exports = {
     subscriptionPurchase,
     isAdmin,
     notification,
-    notifiLength
+    notifiLength,
+    editProfile,
+    userProfileImage
 }

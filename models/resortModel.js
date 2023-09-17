@@ -16,6 +16,7 @@ const resortSchema = new mongoose.Schema({
     },
     hoster_id:{
         type:String,
+        ref:"Users",
         required:true
     },
     resort_type:{

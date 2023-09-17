@@ -43,6 +43,13 @@ const UserSchema = new mongoose.Schema({
     },
     resort_id:{
         type:String
+    },
+    age:{
+        type:Number,
+
+    },
+    profile_img:{
+        type:String
     }
 })
 

@@ -360,6 +360,74 @@ const deleteImg = async(req,res)=>{
     }
 }
 
+const editAmentis = async(req,res)=>{
+    try {
+        
+const data = req.body.data
+const id = req.body.id
+const hoster = req.admin_id
+
+await Resorts.findOneAndUpdate({hoster_id:hoster,'amenities._id':id},{$set:{ 'amenities.$': data }},{new:true}).then(()=>{
+    res.status(200).send({message:"updated"})
+})
+
+    } catch (error) {
+        console.log(error.message);
+    }
+}
+
+const editResorts = async(req,res)=>{
+    try {
+        
+const data = req.body.data
+const id = req.body.id
+const hoster = req.admin_id
+
+await Resorts.findOneAndUpdate({hoster_id:hoster,'restaurants._id':id},{$set:{ 'restaurants.$': data }},{new:true}).then(()=>{
+    res.status(200).send({message:"updated"})
+})
+
+    } catch (error) {
+        console.log(error.message);
+    }
+}
+
+const editSurroundings = async(req,res)=>{
+    try {
+        
+        const hoster = req.admin_id;
+        const resort = await Resorts.findOne({ hoster_id: hoster });
+        const data = req.body.data;
+        const id = data.id;
+        
+        let updated = false;
+        
+        resort.surroundings.forEach((surrounding) => {
+          const itemIndex = surrounding.items.findIndex((item) => item._id.toString() === id);
+          if (itemIndex !== -1) {
+            // Update the nested item based on its _id
+            surrounding.items[itemIndex] = data;
+            updated = true;
+          }
+        });
+        
+        if (updated) {
+          // Save the updated resort document
+          await resort.save();
+          res.status(200).send({ message: 'updated' });
+        } else {
+          res.status(404).send({ message: 'Item not found' });
+        }
+        
+        
+
+
+
+    } catch (error) {
+        console.log(error.message);
+    }
+}
+
 
 
 
@@ -380,5 +448,8 @@ module.exports = {
     getImages,
     addToMainImage,
     addAsBanner,
-    deleteImg
+    deleteImg,
+    editAmentis,
+    editResorts,
+    editSurroundings
 }

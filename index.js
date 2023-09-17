@@ -10,7 +10,8 @@ const superAdminRoute = require("./routes/superAdmin")
 const initializeSocket= require("./middlewares/socket.io")
 const app = express()
 const http = require('http').createServer(app); 
-
+const dotenv = require("dotenv")
+dotenv.config()
 app.use(session({
   secret: 'your-secret-key',
   resave: false,
@@ -40,14 +41,15 @@ app.use('/public', express.static('./public/resort_img'));
 
 
 
-mongoose.connect("mongodb://127.0.0.1:27017/Ecovibe").then(() => {
+mongoose.connect(process.env.DATABASE).then(() => {
   console.log("Connected to MongoDB");
 
 }).catch(err => {
   console.error("Error connecting to MongoDB:", err);
 });
-const server = http.listen(4000, () => {
+const server = http.listen(process.env.PORT, () => {
   console.log("Server started listening to port");
+
 });
 
 initializeSocket(server)

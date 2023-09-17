@@ -5,6 +5,7 @@ const adminController = require("../controllers/adminController")
 const resortController = require("../controllers/resortController")
 const roomController = require("../controllers/roomController")
 const chatController = require("../controllers/chatController")
+const chartsController = require("../controllers/chartsController")
 
 const admindecoder = require("../middlewares/userDecoder")
 
@@ -58,8 +59,11 @@ router.post("/adminchatsubmit",admindecoder.adminDecoder,chatController.adminSub
 router.get("/adminchatlist",admindecoder.adminDecoder,chatController.adminChatList)
 router.get("/adminchatview",admindecoder.adminDecoder,chatController.adminSingleViewChat)
 
+router.get("/resortcharts",admindecoder.adminDecoder,chartsController.resortChart)
 
-
+router.patch("/editrestaurant",admindecoder.adminDecoder,resortController.editResorts)
+router.patch("/editamenties",admindecoder.adminDecoder,resortController.editAmentis)
+router.patch("/editSurroundings",admindecoder.adminDecoder,resortController.editSurroundings)
 
 
 

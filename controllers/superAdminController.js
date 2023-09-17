@@ -242,6 +242,46 @@ if(data){
     }
 }
 
+const getResorts = async(req,res)=>{
+    try {
+
+        const data = await Resort.find().populate("hoster_id")
+        res.status(200).send(data)
+        
+    } catch (error) {
+        console.log(error.message);
+    }
+}
+
+const blockResort = async(req,res)=>{
+    try {
+  const id = req.body.id
+
+  await Resort.findOneAndUpdate({_id:id},{$set:{is_approved:false}}).then(()=>{
+    res.status(200).send({message:"successfully blocked"})
+  })
+        
+        
+    } catch (error) {
+        console.log(error.message);
+    }
+}
+
+const unBlock = async(req,res)=>{
+    try {
+        
+        const id = req.body.id
+
+        await Resort.findOneAndUpdate({_id:id},{$set:{is_approved:true}}).then(()=>{
+          res.status(200).send({message:"successfully unblocked"})
+        })
+              
+
+    } catch (error) {
+        console.log(error.message);
+    }
+}
+
 
 
 module.exports = {
@@ -252,5 +292,8 @@ module.exports = {
     approveRequest,
     rejectRequest,
     saveSubscription,
-    getSubscription
+    getSubscription,
+    getResorts,
+    blockResort,
+    unBlock
 }

@@ -7,7 +7,7 @@ const decoder =  async(req, res,next) => {
          const token = req.headers.authorization?.split(" ")[1];
     const decoded = jwt.verify(token,'secret'); 
       req.user_id = decoded._id
-    
+     console.log("works");
     } catch (error) {
         console.log(error.message);
       return res.status(400).json({ error: 'Invalid header format' });

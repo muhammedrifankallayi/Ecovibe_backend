@@ -14,10 +14,10 @@ const path = require("path")
 
 const storage = multer.diskStorage({
     destination: (req, file, callBack) => {
-        callBack(null, path.join(__dirname,'../public'))
+        callBack(null, path.join(__dirname,'../public/resort_img'))
     },
     filename: (req, file, callBack) => {
-        callBack(null, `FunOfHeuristic_${file.originalname}`)
+        callBack(null, `ccvvFunOfHeuristic_${file.originalname}`)
     }
   })
 
@@ -38,7 +38,7 @@ const upload = multer({ storage: storage })
    router.post("/hoster-req",userdecoder.decoder,usercontroller.saveReq)
    router.get("/forget-otp",usercontroller.forgetotp)
    router.post("/newpassword",usercontroller.updatePassword)
-   router.post("/file",upload.single("file"))
+   router.post("/file",upload.single("file"),userdecoder.decoder,usercontroller.userProfileImage)
 
    router.get("/getResorts",bookingController.getResorts)
    router.get("/getSingleView",bookingController.getSingleView)
@@ -49,7 +49,7 @@ const upload = multer({ storage: storage })
    router.patch("/confirmbooking",userdecoder.decoder,bookingController.confirmBooking) 
    router.get("/getsubscription",usercontroller.getSubscriptions)
    router.patch('/subscriptionpurchase',userdecoder.decoder,usercontroller.subscriptionPurchase)
-   router.get("/isAdmin",userdecoder.decoder,usercontroller.isAdmin)
+   router.get("/isAdmin",usercontroller.isAdmin)
 
    router.get("/notifications",userdecoder.decoder,usercontroller.notification)
    router.get("/getnotificationlength",userdecoder.decoder,usercontroller.notifiLength)
@@ -57,4 +57,13 @@ const upload = multer({ storage: storage })
    router.get("/chatview",userdecoder.decoder,chatController.viewChatMessages)
    router.post("/submitmsg",userdecoder.decoder,chatController.submitMsg)
    router.get("/userchatlist",userdecoder.decoder,chatController.chatList) 
+
+   router.put("/editprofile",userdecoder.decoder,usercontroller.editProfile)
+
+
+ 
+router.post("/commentsubmit",userdecoder.decoder,bookingController.submitComments)
+router.patch("/submitrating",bookingController.submitRating)
+
+
    module.exports =router

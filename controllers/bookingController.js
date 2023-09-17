@@ -4,13 +4,14 @@ const Resorts = require("../models/resortModel");
 const Users = require("../models/UserModel");
 const Rooms = require("../models/roomModel")
 const Bookings = require("../models/bookingsModel")
+const Reviews = require("../models/reviewsModel")
 
 
 
 const getResorts = async (req, res) => {
     try {
-
-        const data = await Resorts.find()
+        const today = new Date()
+        const data = await Resorts.find({subcription_End:{$gt:today}, images: { $exists: true, $ne: [] },is_approved:true})
    
         res.status(200).json({ data })
 
@@ -26,11 +27,11 @@ const getSingleView = async (req, res) => {
         const id = req.query.id
         const data = await Resorts.findById({ _id: id });
         const roomdata = await Rooms.findOne({ resort_id: id })
-
+        const reviews = await Reviews.find({resort_id:id}).populate("user_id")
         if (roomdata) {
-            res.status(200).json({ data, mainImg: data.show_img.slice(0, 4), rooms: roomdata.rooms })
+            res.status(200).json({ data, mainImg: data.show_img.slice(0, 4), rooms: roomdata.rooms ,reviews })
         } else {
-            res.status(200).json({ data, mainImg: data.show_img.slice(0, 4), rooms: [] })
+            res.status(200).json({ data, mainImg: data.show_img.slice(0, 4), rooms: [] ,reviews })
 
         }
 
@@ -155,6 +156,47 @@ const confirmBooking = async(req,res)=>{
     }
 }
 
+const submitComments = async(req,res)=>{
+    try {
+        const userId = req.user_id
+        const data = req.body.data
+        const comment = data.comment
+        const resort_id = data.resort_id
+       
+const review = new Reviews({
+    user_id:userId,
+    resort_id:resort_id,
+    comment:comment,
+   
+
+})
+
+ const result =  await review.save()
+ const Data = await Reviews.populate(result, { path: 'user_id' });
+    res.status(200).send(Data)
+
+
+    } catch (error) {
+        res.status(400).send({error})
+        console.log(error.message);
+    }
+}
+
+const submitRating = async(req,res)=>{
+    try {
+        const details = req.body.data
+        const review_id = details.id
+        const value = parseFloat(details.value)
+        await Reviews.findByIdAndUpdate({_id:review_id},{$set:{rating:value}}).then(()=>{
+            res.status(200).send({message:"rated"})
+        },(err)=>{
+            res.status(400).send({err})
+        })
+    } catch (error) {
+        console.log(error.message);
+    }
+}
+
 
 
 
@@ -164,5 +206,7 @@ module.exports = {
     checkAvailability,
     getRoomData,
     placeBooking,
-    confirmBooking
+    confirmBooking,
+    submitComments,
+    submitRating
 }
