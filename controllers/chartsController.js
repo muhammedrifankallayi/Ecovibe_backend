@@ -153,11 +153,14 @@ const resortChart = async(req,res)=>{
         console.log("1");
      const adminId = req.admin_id
      const resort = await Resorts.findOne({hoster_id:adminId})
+     const hi = await Bookings.findOne({resoert_id:resort._id});
+     console.log(hi);
      const bookings = await Bookings.aggregate([
         {
           $match: {
-            placed: true,
-            resort_id: resort._id
+            resoert_id:resort._id.toString(),
+            placed: true
+           
           }
         },
         {
@@ -175,14 +178,14 @@ const resortChart = async(req,res)=>{
             _id: 1
           }
         }
-      ]);
+      ]).exec()
       
     console.log("1");
 
     const resortsales = await ResortSales.aggregate([
         {
           $match: {
-            resort_id: resort._id
+            resort_id: resort._id.toString()
           }
         },
         {
@@ -210,7 +213,7 @@ const resortChart = async(req,res)=>{
       const avgrating = await Reviews.aggregate([
         {
             $match: {
-                resort_id: resort._id 
+                resort_id: resort._id.toString() 
             }
         },
         {
@@ -235,13 +238,15 @@ console.log(avgrating);
 console.log(bookings);
 console.log(resortsales);
 
+const totalSaleAmount = resortsales[0].totalAmount
+
 const bookingdata = arrConvert(bookings)
 const salesdata = arrConvert(resortsales)
 const totalSales = TOTAL(resortsales)
 const totalBookings = TOTAL(bookings)
 
 
-res.status(200).send({bookingdata,salesdata,totalBookings,totalSales})
+res.status(200).send({bookingdata,salesdata,totalBookings,totalSales,resort,totalSaleAmount});
 
 
     } catch (error) {

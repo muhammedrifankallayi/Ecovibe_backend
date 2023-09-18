@@ -65,5 +65,9 @@ const upload = multer({ storage: storage })
 router.post("/commentsubmit",userdecoder.decoder,bookingController.submitComments)
 router.patch("/submitrating",bookingController.submitRating)
 
+router.post("/addtowishlist",userdecoder.decoder,usercontroller.addToWhishList)
+router.get("/getwishlist",userdecoder.decoder,usercontroller.getWishList)
+router.patch("/removefromwish",userdecoder.decoder,usercontroller.removeWhishlist)
+
 
    module.exports =router

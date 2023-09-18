@@ -11,6 +11,7 @@ const resortSalesSchema = new mongoose.Schema({
     },
     roomId:{
         type:String,
+        ref:"ResortRoom",
         required:true
     },
     amount:{

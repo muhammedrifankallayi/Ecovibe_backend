@@ -5,6 +5,7 @@ const Users = require("../models/UserModel");
 const Rooms = require("../models/roomModel")
 const Bookings = require("../models/bookingsModel")
 const Reviews = require("../models/reviewsModel")
+const ResortSales = require("../models/resortSalesModel")
 
 
 
@@ -126,6 +127,21 @@ if(bookingdata){
         email:email,
         age:age
     })
+
+   
+    
+   const roomData = await Rooms.findOne({resort_id:resortId})
+   const priceOf = roomData.rooms.find((value)=>value._id.toString()===roomId )
+   
+   console.log(priceOf);
+
+const Bill  = new ResortSales({
+    resort_id:resortId,
+    userId:userId,
+   roomId:roomId,
+   amount:priceOf.pricePerNight
+})
+await Bill.save()
    await   Booking.save().then(()=>{
     res.status(200).json({message:"successfull"})
   },(err)=>{

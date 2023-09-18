@@ -6,6 +6,7 @@ const Resort = require("../models/resortModel")
 const Subscriptions = require("../models/subscriptionModel")
 const Notifications = require("../models/notificationModel")
 const Sales = require("../models/superAdminsalesModel")
+const WishList  = require("../models/wishListModel")
 
 
 function tokenReader(token){
@@ -464,6 +465,78 @@ console.log(req);
   }
 }
 
+const addToWhishList = async(req,res)=>{
+  try {
+    const userid = req.user_id
+    const resortid = req.body.id
+     const data = {resortId:resortid}
+     const wishData = await WishList.findOne({userId:userid})
+     
+
+
+     
+     if(wishData ){
+
+     
+  const isAdded = wishData.List.map((val)=>{
+    return val.resortId === resortid
+  })
+
+  if(isAdded[0]){
+    console.log(isAdded);
+    return res.status(400).send({message:"already added"})
+  }
+
+      await WishList.findOneAndUpdate({userId:userid},{$push:{List:data}}).then(()=>{
+        res.status(200).send({message:"added to wishlist"})
+      })
+     }else{
+      const wishlist = new WishList({
+        userId:userid,
+        List:[data]
+       })
+   
+       await wishlist.save().then(()=>{
+         res.status(200).send({message:"added to wishlist"})
+       })
+     }
+   
+
+
+  } catch (error) {
+    console.log(error.message);
+  }
+}
+
+
+const getWishList = async(req,res)=>{
+  try {
+    
+ const user_id = req.user_id
+
+ const data = await WishList.findOne({userId:user_id}).populate("List.resortId")
+ console.log(data);
+ res.status(200).send(data.List)
+
+  } catch (error) {
+    console.log(error.message);
+  }
+}
+
+
+const removeWhishlist = async(req,res)=>{
+  try {
+
+   
+    await WishList.findOneAndUpdate({userId:req.user_id},{$pull:{List:{resortId:req.body.id}}}).then(()=>{
+      res.status(200).send({message:"Removed from wishlist"})
+    },(err)=>{
+  res.status(400).send({err})
+    })
+  } catch (error) {
+    console.log(error.message);
+  }
+}
 
 module.exports = {
     Postregister,
@@ -480,5 +553,8 @@ module.exports = {
     notification,
     notifiLength,
     editProfile,
-    userProfileImage
+    userProfileImage,
+    addToWhishList,
+    getWishList,
+    removeWhishlist
 }
