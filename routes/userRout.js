@@ -71,5 +71,8 @@ router.patch("/removefromwish",userdecoder.decoder,usercontroller.removeWhishlis
 router.post("/checkpassword",userdecoder.decoder,usercontroller.passwordCheck)
 router.patch("/updatepassword",userdecoder.decoder,usercontroller.resetPassword)
 
+router.get("/getuserbookings",userdecoder.decoder,bookingController.getUserBookings)
+router.get("/viewroom",bookingController.ViewRoom)
+router.patch("/cancelbooking",bookingController.CancelBooking)
 
    module.exports =router

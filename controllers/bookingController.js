@@ -30,6 +30,9 @@ const getSingleView = async (req, res) => {
         const roomdata = await Rooms.findOne({ resort_id: id })
         const reviews = await Reviews.find({resort_id:id}).populate("user_id")
         if (roomdata) {
+
+
+            
             res.status(200).json({ data, mainImg: data.show_img.slice(0, 4), rooms: roomdata.rooms ,reviews })
         } else {
             res.status(200).json({ data, mainImg: data.show_img.slice(0, 4), rooms: [] ,reviews })
@@ -214,6 +217,53 @@ const submitRating = async(req,res)=>{
 }
 
 
+const getUserBookings = async(req,res)=>{
+    try {
+       
+     const userId = req.user_id
+     const data = await Bookings.find({user_id:userId,placed:true}).populate("resoert_id")
+
+
+
+
+     res.status(200).send({data})
+
+    } catch (error) {
+        console.log(error.message);
+    }
+}
+
+const ViewRoom = async(req,res)=>{
+    
+    try {
+        const resortId = req.query.resortId
+        const roomId = req.query.roomId
+const data = await Rooms.findOne({resort_id:resortId})
+const room = data.rooms.find((val)=>val._id.toString()===roomId)
+console.log(room);
+res.status(200).send(room)
+
+    } catch (error) {
+        
+    }
+}
+
+const CancelBooking = async(request,response)=>{
+    try {
+        
+   const BID = request.body.id
+   await Bookings.findOneAndUpdate({_id:BID},{$set:{placed:false}}).then(()=>{
+    response.status(200).send({message:"Booking Cancelled"})
+   },(err)=>{
+    response.status(400).send({message:"Cat't cancel"})
+   })
+  
+
+    } catch (error) {
+        console.log(error.message);
+    }
+}
+
 
 
 module.exports = {
@@ -224,5 +274,8 @@ module.exports = {
     placeBooking,
     confirmBooking,
     submitComments,
-    submitRating
+    submitRating,
+    getUserBookings,
+    ViewRoom,
+    CancelBooking
 }
