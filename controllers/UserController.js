@@ -538,6 +538,43 @@ const removeWhishlist = async(req,res)=>{
   }
 }
 
+
+const passwordCheck = async(req,res)=>{
+  try {
+    const userId = req.user_id
+  const password = req.body.data.currentpassword
+const userData = await User.findOne({_id:userId})
+
+if(userData.password === password){
+  res.status(200).send({message:"password matching"})
+}else{
+  res.status(400).send({message:"incorrect password"})
+}
+
+
+  } catch (error) {
+    console.log(error.message);
+  }
+}
+
+
+const resetPassword = async(req,res)=>{
+  try {
+    const userId = req.user_id
+    const newPassword = req.body.data.Newpassword
+    if(newPassword.trim() !==""){
+      await User.findOneAndUpdate({_id:userId},{$set:{password:newPassword}}).then(()=>{
+        res.status(200).send({message:"updated successfully"})
+      })
+    }
+
+  } catch (error) {
+    console.log(error.message);
+  }
+}
+
+
+
 module.exports = {
     Postregister,
     ValidateLOgin,
@@ -556,5 +593,7 @@ module.exports = {
     userProfileImage,
     addToWhishList,
     getWishList,
-    removeWhishlist
+    removeWhishlist,
+    passwordCheck,
+    resetPassword
 }

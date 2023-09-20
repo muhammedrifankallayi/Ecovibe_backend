@@ -68,6 +68,8 @@ router.patch("/submitrating",bookingController.submitRating)
 router.post("/addtowishlist",userdecoder.decoder,usercontroller.addToWhishList)
 router.get("/getwishlist",userdecoder.decoder,usercontroller.getWishList)
 router.patch("/removefromwish",userdecoder.decoder,usercontroller.removeWhishlist)
+router.post("/checkpassword",userdecoder.decoder,usercontroller.passwordCheck)
+router.patch("/updatepassword",userdecoder.decoder,usercontroller.resetPassword)
 
 
    module.exports =router
