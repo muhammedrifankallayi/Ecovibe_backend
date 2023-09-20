@@ -50,9 +50,13 @@ const resortRoomSchema = new mongoose.Schema({
                 type: Boolean,
                 default: true,
             },
+            roomCount:{
+                type:Number,
+                default:0
+            },
             bookings: [
                 {
-                    guestName: String,
+                    guestId: String,
                     checkInDate: Date,
                     checkOutDate: Date,
                 },
