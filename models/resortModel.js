@@ -126,7 +126,13 @@ const resortSchema = new mongoose.Schema({
         reviews:{
           type:Array,
           
-        }
+        },
+        questions:[
+          {
+            user_id:String,
+            question:String
+          }
+        ]
 
    
    

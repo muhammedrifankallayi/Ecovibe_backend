@@ -75,4 +75,8 @@ router.get("/getuserbookings",userdecoder.decoder,bookingController.getUserBooki
 router.get("/viewroom",bookingController.ViewRoom)
 router.patch("/cancelbooking",bookingController.CancelBooking)
 
+router.post("/dropquestion",userdecoder.decoder,bookingController.dropquestions)
+
+
+
    module.exports =router

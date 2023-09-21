@@ -47,6 +47,9 @@ const getSingleView = async (req, res) => {
 }
 
 
+
+
+
 const checkAvailability = async (req, res) => {
     try {
         const body = req.body.data;
@@ -55,22 +58,31 @@ const checkAvailability = async (req, res) => {
         const adults = body.adults;
         const children = body.childrens;
         const resortId = body.resort_id;
+
+// deleting expired booking from bookings
         
         const Room = await Rooms.findOne({ resort_id: resortId });
+        const today = new Date();
         
+        Room.rooms.forEach(room => {
+            room.bookings = room.bookings.filter(booking => booking.checkOutDate <= today);
+        });
+        await Room.save()
+
+
         if (Room) {
           const matchingRooms = Room.rooms.filter((room) => {
             return (
               room.available === true &&
-              room.adults === adults &&
-              room.childrens === children
+              room.adults >= adults &&
+              room.childrens >= children 
             );
           });
         
         if(matchingRooms.length!==0){
             res.status(200).send({rooms:matchingRooms})
         }else{
-            res.status(404).send({message:`Rooms are not available in ${checkIn}`})
+            res.status(404).send({message:`Rooms are not available for ${adults} adults and ${children} children`})
         }
         } else {
          res.status(404).send({message:"Resort not found"})
@@ -283,6 +295,55 @@ const CancelBooking = async(request,response)=>{
     }
 }
 
+const dropquestions =  async(req,res)=>{
+    try {
+const id  = req.body.data.id
+const question = req.body.data.question
+
+const x = {user_id:req.user_id,question:question}
+
+        const ResortData = await Resorts.findOne({_id:id})
+if(ResortData){
+    console.log(x);
+    ResortData.questions.push(x)
+    await ResortData.save()
+    res.status(200).send({message:"question dropped"})
+}
+
+    } catch (error) {
+        console.log(error.message);
+    }
+}
+
+const checkAvailableOnDate = async(req,res)=>{
+    try {
+        
+    const resortId = req.body.data.resortId
+    const roomId = req.body.data.roomId
+    const checkIn = req.body.data.checkin
+
+    const today = new Date();
+    const roomdata = await  Rooms.findOne({resort_id:resortId})
+    roomdata.rooms.forEach(room => {
+        room.bookings = room.bookings.filter(booking => booking.checkOutDate <= today);
+    });
+        await roomdata.save()
+    const selectedRoom = roomdata.rooms.find((room)=>room._id.toString()===roomId)
+
+
+        
+   
+
+
+        if(selectedRoom.bookings.length>=roomdata.roomCount){
+               
+        }
+
+    } catch (error) {
+        console.log(error.message);
+    }
+}
+
 
 
 module.exports = {
@@ -296,5 +357,6 @@ module.exports = {
     submitRating,
     getUserBookings,
     ViewRoom,
-    CancelBooking
+    CancelBooking,
+    dropquestions
 }

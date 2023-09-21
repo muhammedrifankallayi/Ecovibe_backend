@@ -51,7 +51,7 @@ const resortRoomSchema = new mongoose.Schema({
                 default: true,
             },
             roomCount:{
-                type:Number,
+                type:Number,    
                 default:0
             },
             bookings: [

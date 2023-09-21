@@ -14,9 +14,17 @@ const viewChatMessages = async(req,res)=>{
      const adminId = req.query.id
   
  const connection = await ChatConnections.findOne({user_id:userId,admin_id:adminId})
-     const messageData = await ChatMessages.find({connectionId:connection._id})
     
-     res.status(200).send({data:messageData,id:userId,cId:connection._id})
+if(connection){
+    const messageData = await ChatMessages.find({connectionId:connection._id})
+
+    res.status(200).send({data:messageData,id:userId,cId:connection._id})
+console.log("ooll");
+}else{
+    res.status(200).send({data:[],id:userId,cId:null})
+
+}
+
 
     } catch (error) {
         console.log(error.message);
