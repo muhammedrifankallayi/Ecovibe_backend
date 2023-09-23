@@ -320,24 +320,87 @@ const checkAvailableOnDate = async(req,res)=>{
         
     const resortId = req.body.data.resortId
     const roomId = req.body.data.roomId
-    const checkIn = req.body.data.checkin
+    const checkIn = req.body.data.checkIn
+    const checkOut = req.body.data.checkOut
 
     const today = new Date();
-    const roomdata = await  Rooms.findOne({resort_id:resortId})
+    var roomdata = await  Rooms.findOne({resort_id:resortId})
     roomdata.rooms.forEach(room => {
         room.bookings = room.bookings.filter(booking => booking.checkOutDate <= today);
     });
-        await roomdata.save()
+    roomdata =    await roomdata.save()
+    const date1 = new Date(checkIn);
+    const date2 = new Date(checkOut);
     const selectedRoom = roomdata.rooms.find((room)=>room._id.toString()===roomId)
+    
+
+    const avalabledays = []
+    var prevdate = null
+    
+           selectedRoom.bookings.forEach((item)=>{
+            const checkin  = new  Date(item.checkInDate)
+      if(prevdate){
+    
+    const diff = checkin - prevdate
+    const days = diff /  (1000 * 3600 * 24);
+    if(days>1){
+        avalabledays.push({checkin,prevdate})
+    }
+      }     
+           prevdate= new Date(item.checkOutDate)
+           })
+
+    
+    const timeDifference = Math.abs(date2 - date1);
+    const daysDifference = timeDifference / (1000 * 3600 * 24);
+   
+       selectedRoom.bookings.forEach((item)=>{
+        const checkin  = new  Date(item.checkInDate)
+        const checkout = new  Date(item.checkOutDate)
+       
+        if(checkin>date1 && checkout<date2){
+         
+           return res.status(400).send({message:`sorry ! room already booked between ${checkin} and ${checkout}`}) 
+        }else if(checkin<date1 && checkout>date2){
+           
+            return res.status(400).send({message:`sorry ! room already booked between ${checkin.toDateString()} and ${checkout.toDateString()}`}) 
+        }else if(checkin<date1 && checkout>date1){
+           
+            return res.status(400).send({message:`sorry ! room already booked you cant checkin between ${checkin} and ${checkout}`}) 
+        }else if(checkin<date2 && checkout>date2){
+            return res.status(400).send({message:`sorry ! you cant set checkout between ${checkin} and ${checkout} , beacause room already room already booked that days`}) 
+        }else{
+            console.log(date1 );
+         return   res.status(200).send({message:"Room available in that days",avalabledays})
+        }
+       })
 
 
-        
+
    
 
 
-        if(selectedRoom.bookings.length>=roomdata.roomCount){
-               
-        }
+        
+
+    } catch (error) {
+        console.log(error.message);
+    }
+}
+
+
+const categoryWise = async(req,res)=>{
+    try {
+        
+    const category = req.query.category
+
+    const data  = await Resorts.find({resort_type:category})
+if(data.length>0){
+    res.status(200).send(data)
+}else{
+    res.status(400).send({message:"currently not available"})
+}
+
+    
 
     } catch (error) {
         console.log(error.message);
@@ -358,5 +421,7 @@ module.exports = {
     getUserBookings,
     ViewRoom,
     CancelBooking,
-    dropquestions
+    dropquestions,
+    checkAvailableOnDate,
+    categoryWise
 }

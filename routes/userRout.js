@@ -76,7 +76,8 @@ router.get("/viewroom",bookingController.ViewRoom)
 router.patch("/cancelbooking",bookingController.CancelBooking)
 
 router.post("/dropquestion",userdecoder.decoder,bookingController.dropquestions)
+router.post("/getavailableondate",bookingController.checkAvailableOnDate)
 
-
+router.get("/categorywise",bookingController.categoryWise)
 
    module.exports =router

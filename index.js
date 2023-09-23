@@ -13,14 +13,14 @@ const http = require('http').createServer(app);
 const dotenv = require("dotenv")
 dotenv.config()
 app.use(session({
-  secret: 'your-secret-key',
+  secret: process.env.SESSION,
   resave: false,
   saveUninitialized: true
 }));
 
 app.use(cors({
     credentials:true,
-    origin:["http://localhost:4200"]
+    origin:[process.env.CORS]
 }))
 app.use(cookieparser())
 app.use(bodyParser.urlencoded({ extended: true }));
