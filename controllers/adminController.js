@@ -3,6 +3,8 @@
 const Users = require('../models/UserModel');
 const Subscription = require("../models/subscriptionModel")
 const Resort = require("../models/resortModel")
+const Bookings = require("../models/bookingsModel")
+const Notification = require("../models/notificationModel")
 
 // modules
 const jwt = require("jsonwebtoken")
@@ -103,6 +105,60 @@ const   getresort  = async(req,res)=>{
 }
 
 
+const getBookings = async(req,res)=>{
+    try {
+
+   const id  = req.admin_id
+
+   const resort = await Resort.findOne({hoster_id:id})
+
+   const data = await Bookings.find({resoert_id:resort._id})
+
+ console.log(data);
+
+   res.status(200).send(data)
+    
+
+        
+    } catch (error) {
+        console.log(error.message +'booking');
+    }
+}
+
+const CancelBooking = async(req,res)=>{
+const data = await Bookings.findOne({_id:req.body.id})
+const notify = new Notification({
+    user_id:data.user_id,
+    notification:"sorry your booking has been cancelled by admin due to some issue , for more detail contact us or chat with us"
+})
+
+    try {
+        const BID = req.body.id
+await Bookings.findOneAndUpdate({_id:BID},{$set:{placed:false}})
+await notify.save().then(()=>{
+    
+    res.status(200).send({message:"cancelled booking successfully"})
+},(err)=>{
+    res.status(400).send({message:err})
+})
+
+    } catch (error) {
+        
+    }
+}
+
+const saveprofile = async(req,res)=>{
+    try {
+        const data = req.body.data
+        const update = await Users.findOneAndUpdate({_id:req.admin_id},{$set:{name:data.name,mobile:data.mobile,email:data.email}}).then(()=>{
+            res.status(200).send({message:"saved successfully"})
+        }).catch((err)=>{
+            res.status(400).send({message:err})
+        })
+    } catch (error) {
+        console.log(error.message);
+    }
+}
 
 
 
@@ -110,5 +166,8 @@ const   getresort  = async(req,res)=>{
 module.exports ={
     adminVerify,
     getAdmin,
-    getresort
+    getresort,
+    getBookings,
+    CancelBooking,
+    saveprofile
 }

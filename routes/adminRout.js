@@ -65,6 +65,9 @@ router.patch("/editrestaurant",admindecoder.adminDecoder,resortController.editRe
 router.patch("/editamenties",admindecoder.adminDecoder,resortController.editAmentis)
 router.patch("/editSurroundings",admindecoder.adminDecoder,resortController.editSurroundings)
 
+router.get("/getbookings",admindecoder.adminDecoder,adminController.getBookings)
+router.patch("/cancelbooking",adminController.CancelBooking)
+router.post("/saveprofile",admindecoder.adminDecoder,adminController.saveprofile)
 
 
 module.exports = router

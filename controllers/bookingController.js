@@ -136,16 +136,7 @@ const age = parseInt( bookingdata.age)
 const roomData = await Rooms.findOne({resort_id:resortId})
 const priceOf = roomData.rooms.find((value)=>value._id.toString()===roomId )
 
-const checkOutDates = priceOf.bookings.map(booking => booking.checkOutDate);
 
-// Find the maximum checkOutDate using Math.max and the spread operator
-const maxCheckOutDate = new Date(Math.max(...checkOutDates));
-const options = { year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric' };
-const formattedDate = maxCheckOutDate.toLocaleDateString('en-US', options);
-if(priceOf.roomCount<=priceOf.bookings.length){
-    console.log("fulll");
- return   res.status(400).send({message:`room is not available now ,available After ${formattedDate}`})
-}
 
 const bill = { guestId: userId,
     checkInDate: new Date(bookingdata.checkin),
