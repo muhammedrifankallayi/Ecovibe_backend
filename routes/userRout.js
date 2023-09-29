@@ -41,7 +41,7 @@ const upload = multer({ storage: storage })
    router.post("/file",upload.single("file"),userdecoder.decoder,usercontroller.userProfileImage)
 
    router.get("/getResorts",bookingController.getResorts)
-   router.get("/getSingleView",bookingController.getSingleView)
+   router.get("/getSingleView",userdecoder.decoder,bookingController.getSingleView)
 
    router.post("/availability",bookingController.checkAvailability)
    router.get("/getroom",bookingController.getRoomData)

@@ -154,7 +154,7 @@ const resortChart = async(req,res)=>{
      const adminId = req.admin_id
      const resort = await Resorts.findOne({hoster_id:adminId})
      const hi = await Bookings.findOne({resoert_id:resort._id});
-     console.log(hi);
+  
      const bookings = await Bookings.aggregate([
         {
           $match: {
@@ -233,10 +233,7 @@ const resortChart = async(req,res)=>{
       ]);
       
 
-console.log(avgrating);
 
-console.log(bookings);
-console.log(resortsales);
 
 const totalSaleAmount = resortsales[0].totalAmount
 

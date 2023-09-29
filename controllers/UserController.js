@@ -145,9 +145,15 @@ if(userExist){
 const  ValidateLOgin = async(req,res)=>{
     try {
        const FormData = req.body.FormData
+     
         const email  = FormData.email
         const Password = FormData.password
         const UserData = await User.findOne({email:email})
+
+
+if(!UserData){
+  return status(404).send({message:"user not found"})
+}
 
 if(UserData.is_blocked===true){
     return res.status(401).send({message:"user blocked"})

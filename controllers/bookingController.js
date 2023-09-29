@@ -25,6 +25,9 @@ const getResorts = async (req, res) => {
 const getSingleView = async (req, res) => {
     try {
       
+     
+
+
         const id = req.query.id
         const data = await Resorts.findById({ _id: id });
         const roomdata = await Rooms.findOne({ resort_id: id })
@@ -32,8 +35,8 @@ const getSingleView = async (req, res) => {
         if (roomdata) {
 
 
-            
-            res.status(200).json({ data, mainImg: data.show_img.slice(0, 4), rooms: roomdata.rooms ,reviews })
+            console.log(req.user_id);
+            res.status(200).json({ data, mainImg: data.show_img.slice(0, 4), rooms: roomdata.rooms ,reviews ,userId:req.user_id })
         } else {
             res.status(200).json({ data, mainImg: data.show_img.slice(0, 4), rooms: [] ,reviews })
 
@@ -167,7 +170,7 @@ if(bookingdata){
   
   
    
-   console.log(priceOf);
+  
 
 const Bill  = new ResortSales({
     resort_id:resortId,
@@ -271,7 +274,7 @@ const ViewRoom = async(req,res)=>{
         const roomId = req.query.roomId
 const data = await Rooms.findOne({resort_id:resortId})
 const room = data.rooms.find((val)=>val._id.toString()===roomId)
-console.log(room);
+
 res.status(200).send(room)
 
     } catch (error) {
@@ -304,7 +307,7 @@ const x = {user_id:req.user_id,question:question}
 
         const ResortData = await Resorts.findOne({_id:id})
 if(ResortData){
-    console.log(x);
+   
     ResortData.questions.push(x)
     await ResortData.save()
     res.status(200).send({message:"question dropped"})
@@ -370,7 +373,7 @@ const checkAvailableOnDate = async(req,res)=>{
         }else if(checkin<date2 && checkout>date2){
             return res.status(400).send({message:`sorry ! you cant set checkout between ${checkin} and ${checkout} , beacause room already room already booked that days`}) 
         }else{
-            console.log(date1 );
+          
          return   res.status(200).send({message:"Room available in that days",avalabledays})
         }
        })

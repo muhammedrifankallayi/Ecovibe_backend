@@ -17,7 +17,7 @@ function intializeSocket(server) {
         socket.on('setup', (id) => {
             socket.join(id)
             socket.emit('connected')
-            console.log('A user connected');
+            console.log('A user connected' +id);
         });
 
         socket.on('join', (room) => {
@@ -28,7 +28,8 @@ function intializeSocket(server) {
         socket.on('chatMessage', (message) => {
            
             if (message) {
-              console.log(message);
+              console.log("seding ...");
+           
                 socket.in(message.toId).emit("message recieved", message);
 
             }else{
