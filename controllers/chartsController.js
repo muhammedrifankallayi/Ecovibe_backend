@@ -130,12 +130,13 @@ const sale = await Sales.aggregate([
 
 
         // ready to send response  here
-        const usercount = arrConvert(UserCount)
-        const resortcount = arrConvert(resorts)
-        const salesdata = arrConvert(sale)
-        const totalUsers = TOTAL(UserCount)
-        const totalResorts = TOTAL(resorts)
-        const totalSales = TOTAL(sale)
+        const usercount = arrConvert(UserCount || []);
+        const resortcount = arrConvert(resorts || []);
+        const salesdata = arrConvert(sale || []);
+
+        const totalUsers = TOTAL(UserCount || []);
+        const totalResorts = TOTAL(resorts || []);
+        const totalSales = TOTAL(sale || []);
 
 
 
@@ -235,12 +236,12 @@ const resortChart = async(req,res)=>{
 
 
 
-const totalSaleAmount = resortsales[0].totalAmount
+        const totalSaleAmount = resortsales[0]?.totalAmount || 0;
+        const bookingdata = arrConvert(bookings || []);
+        const salesdata = arrConvert(resortsales || []);
+        const totalSales = TOTAL(resortsales || []);
+        const totalBookings = TOTAL(bookings || []);
 
-const bookingdata = arrConvert(bookings)
-const salesdata = arrConvert(resortsales)
-const totalSales = TOTAL(resortsales)
-const totalBookings = TOTAL(bookings)
 
 
 res.status(200).send({bookingdata,salesdata,totalBookings,totalSales,resort,totalSaleAmount});
