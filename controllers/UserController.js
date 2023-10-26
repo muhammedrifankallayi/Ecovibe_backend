@@ -412,31 +412,37 @@ const notifiLength = async(req,res)=>{
      const notification = await Notifications.aggregate([
       {
         $match: {
-          user_id: req.user_id, // Match documents with the specified user_id
+          user_id: req.user_id, 
         },
       },
       {
-        $unwind: '$notification', // Deconstruct the notification array
+        $unwind: '$notification',
       },
       {
         $match: {
-          'notification.is_view': false, // Match documents where is_view is false
+          'notification.is_view': false,
         },
       },
       {
         $group: {
-          _id: '$_id', // Group by the document's _id
+          _id: '$_id',
           count: { $sum: 1 }, // Calculate the count of matching notifications
         },
       },
     ])
-res.status(200).send({count:notification[0].count})
+    if(notification.length!=0){
+      res.status(200).send({count:notification[0].count})
+    }else{
+      res.status(200).send({count:0})
+
+    }
+
 
 
 
 
   } catch (error) {
-    console.log(error.message);
+    console.log(error.message + 'here');
   }
 }
 
