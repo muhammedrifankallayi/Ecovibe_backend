@@ -8,7 +8,7 @@ function intializeSocket(server) {
     const io = socketIO(server, {
         pingTimeout:60000,
         cors: {
-            origin:["http://localhost:4200"]
+            origin:["https://ecovibe.netlify.app"]
          },
       });
       
