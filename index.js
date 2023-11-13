@@ -19,7 +19,7 @@ app.use(session({
 }));
 
 app.use(cors({
-  origin: '*',
+  origin:'*',
   credentials:true
 }))
 app.use(cookieparser())
