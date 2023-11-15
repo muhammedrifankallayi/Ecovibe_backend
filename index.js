@@ -19,8 +19,7 @@ app.use(session({
 }));
 
 app.use(cors({
-  origin:'*',
-  credentials:true
+  origin:"*"
 }))
 app.use(cookieparser())
 app.use(bodyParser.urlencoded({ extended: true }));

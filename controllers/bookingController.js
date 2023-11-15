@@ -153,6 +153,7 @@ if(bookingdata){
         address:address,
         email:email,
         age:age,
+        checkOut:bookingdata?.checkout | new Date()
 
     })
 

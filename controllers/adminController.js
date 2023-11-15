@@ -5,6 +5,7 @@ const Subscription = require("../models/subscriptionModel")
 const Resort = require("../models/resortModel")
 const Bookings = require("../models/bookingsModel")
 const Notification = require("../models/notificationModel")
+const Room = require("../models/roomModel")
 
 // modules
 const jwt = require("jsonwebtoken")
@@ -157,6 +158,18 @@ const saveprofile = async(req,res)=>{
         })
     } catch (error) {
         console.log(error.message);
+    }
+}
+
+const getRomm = async(req,res)=>{
+    try {
+
+        const roomid = req.body.id
+        const rooms = await Room.findOne({_id:req.admin_id})
+    
+        
+    } catch (error) {
+        console.log(error.message,"admin getroom");
     }
 }
 
